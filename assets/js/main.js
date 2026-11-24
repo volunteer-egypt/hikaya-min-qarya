@@ -438,12 +438,20 @@
   function shareStory(id, title) {
     const url = storyUrl(id);
     const text = "حكاية «" + title + "» من " + (getData().meta.name || "حكاية من قرية");
+    function copyFallback() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () { showToast("تم نسخ رابط الحكاية"); }, function () { showToast(url); });
+      } else {
+        showToast(url);
+      }
+    }
     if (navigator.share) {
-      navigator.share({ title: text, text: text, url: url }).catch(function () {});
-    } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(function () { showToast("تم نسخ رابط الحكاية"); }, function () { showToast(url); });
+      navigator.share({ title: text, text: text, url: url }).catch(function (err) {
+        if (err && err.name === "AbortError") return; // المستخدم أغلق نافذة المشاركة بنفسه
+        copyFallback();
+      });
     } else {
-      showToast(url);
+      copyFallback();
     }
   }
   let toastTimer = null;
