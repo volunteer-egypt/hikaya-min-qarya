@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حكاية من قرية | صوت الماضي</title>
+<meta name="description" content="مكتبة قصص سيناء للأطفال: ست حكايات صوتية عن التراث والهوية والخيال.">
+<link rel="icon" href="assets/img/logo-initiative.webp" type="image/webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+
+<header class="top" id="siteHeader"></header>
+
+<main>
+  <section class="hero wrap" id="hero"></section>
+
+  <section class="section wrap" id="stories">
+    <div class="elders-block" id="eldersBlock"></div>
+    <div class="heading">
+      <div>
+        <span class="eyebrow">مكتبة الحكايات</span>
+        <h2>اختار حكايتك</h2>
+        <p>كل حكاية ليها غلافها وصوتها ونصها الكامل.</p>
+      </div>
+      <input aria-label="ابحث عن حكاية" id="search" placeholder="دور على حكاية…" type="search">
+    </div>
+    <div class="cards" id="storiesGrid"></div>
+    <p class="empty" hidden id="empty">مش لاقيين الحكاية دي، جرّب اسم تاني.</p>
+  </section>
+
+  <section class="section wrap" id="visuals">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">معرض الصور</span>
+        <h2>صور وحكايات في نفس الرحلة</h2>
+        <p>الصور الأصلية والرسومات المرفقة للمبادرة، ومعاها أغلفة الحكايات.</p>
+      </div>
+    </div>
+    <div class="gallery" id="galleryGrid"></div>
+    <div class="cover-strip" id="coverStrip"></div>
+    <div class="gallery-groups" id="galleryGroups"></div>
+  </section>
+
+  <section class="section wrap" id="activities">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">من الحكاية إلى أرض الواقع</span>
+        <h2>الأنشطة</h2>
+        <p>هنا بنوثّق الأنشطة اللي نفذناها على أرض الواقع، ونربط كل نشاط بالحكاية اللي ألهمته، مع صور المكان والتجربة.</p>
+      </div>
+    </div>
+    <div class="activities-grid" id="activitiesGrid"></div>
+  </section>
+
+  <section class="section wrap" id="initiative">
+    <div class="about-block" id="aboutBlock"></div>
+  </section>
+
+  <section class="section wrap" id="press">
+    <div class="press-shell">
+      <div class="heading" style="margin-bottom:0">
+        <div>
+          <span class="eyebrow">أرشيف التغطيات</span>
+          <h2>حكاية من قرية في الصحافة والإعلام</h2>
+          <p>مساحة لتوثيق الأخبار والتقارير التي تتناول المبادرة، وحفظ روابطها وصور التغطية الصحفية في أرشيف واحد.</p>
+        </div>
+      </div>
+      <div class="press-tabs" id="pressTabs"></div>
+      <div class="press-grid" id="pressGrid"></div>
+      <div class="press-empty" id="pressEmpty" style="display:none"></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="partners">
+    <div class="partners-shell">
+      <div class="heading">
+        <div>
+          <span class="eyebrow">معًا نصنع الأثر</span>
+          <h2>شركاء النجاح</h2>
+          <p>شركاء يساهمون في دعم الحكاية، والطفولة، والعمل المجتمعي.</p>
+        </div>
+        <span aria-hidden="true" style="color:var(--gold);font-size:30px">✦</span>
+      </div>
+      <div class="partner-grid" id="partnersGrid"></div>
+      <div class="partners-note">شكرًا لكل شركائنا على دعم الحكاية ومشاركة أثرها.</div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="team">
+    <div class="heading">
+      <div>
+        <span class="eyebrow">إدارة المبادرة</span>
+        <h2>فريق عمل المبادرة</h2>
+        <p>القيادة والإشراف على حكاية من قرية · صوت الماضي</p>
+      </div>
+    </div>
+    <div class="team-grid" id="teamGrid"></div>
+  </section>
+</main>
+
+<footer id="siteFooter"></footer>
+
+<!-- نافذة شعار الشريك -->
+<div class="partner-modal" id="partnerModal" role="dialog" aria-modal="true" aria-label="شعار الشريك">
+  <div class="partner-modal-card">
+    <button class="partner-modal-close" id="partnerModalClose" type="button" aria-label="إغلاق">×</button>
+    <img id="partnerModalImg" alt="شعار الشريك">
+    <h3 id="partnerModalName"></h3>
+    <a class="btn" id="partnerModalLink" target="_blank" rel="noopener noreferrer">صفحة الشريك على فيسبوك ↗</a>
+    <a class="btn outline" id="partnerModalPost" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:8px">منشور ذو صلة على فيسبوك ↗</a>
+  </div>
+</div>
+
+<!-- نافذة تواصل الفريق -->
+<div class="contact-modal-backdrop" id="teamContactModal" aria-hidden="true">
+  <div class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="teamContactName">
+    <button aria-label="إغلاق" class="contact-modal-close" type="button">×</button>
+    <span class="contact-modal-eyebrow">حكاية من قرية · فريق المبادرة</span>
+    <h3 id="teamContactName"></h3>
+    <p class="contact-modal-role" id="teamContactRole"></p>
+    <div class="contact-modal-actions" id="teamContactActions"></div>
+    <p class="contact-modal-note">معلومات التواصل متاحة للزوار من خلال الروابط أعلاه.</p>
+  </div>
+</div>
+
+<!-- لايت بوكس الصحافة -->
+<div class="press-lightbox" id="pressLightbox" role="dialog" aria-modal="true" aria-label="عرض صورة التغطية">
+  <button class="press-lightbox-close" id="pressLightboxClose" type="button" aria-label="إغلاق">×</button>
+  <img id="pressLightboxImage" alt="صورة توثيق">
+  <div class="press-lightbox-caption" id="pressLightboxCaption"></div>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/interactive.js"></script>
+</body>
+</html>
