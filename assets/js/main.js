@@ -69,7 +69,7 @@
   /* ---------- إظهار/إخفاء الأقسام ---------- */
   const SECTION_LABELS = {
     hero: "الواجهة الرئيسية",
-    elders: "رسائل الكبار",
+    elders: "الشيوخ",
     stories: "مكتبة الحكايات",
     visuals: "معرض الصور",
     activities: "الأنشطة",
@@ -78,6 +78,11 @@
     partners: "الشركاء",
     team: "فريق العمل"
   };
+
+  // اسم القسم قابل للتعديل من لوحة الإدارة عبر meta.sectionLabel_<id>
+  function secLabel(d, id) {
+    return (d && d.meta && d.meta["sectionLabel_" + id]) || SECTION_LABELS[id] || id;
+  }
 
   function sectionVisible(d, id) {
     const v = d.sectionVisibility || {};
@@ -103,7 +108,7 @@
       ["index.html", "الرئيسية", ""],
       ["index.html#/stories", "الحكايات", "stories"],
       ["index.html#/media", "الصور والأنشطة", "visuals"],
-      ["index.html#/elders", "رسائل الكبار", "elders"],
+      ["index.html#/elders", secLabel(d, "elders"), "elders"],
       ["index.html#/initiative", "عن المبادرة", "initiative"],
       ["index.html#/press", "الصحافة والإعلام", "press"],
       ["index.html#/partners", "الشركاء", "partners"],
@@ -229,7 +234,7 @@
     renderTeam(d);
   }
 
-  /* ---------- رسائل كبار شمال سيناء ---------- */
+  /* ---------- الشيوخ ---------- */
   function renderElders(d) {
     const host = document.getElementById("eldersBlock");
     if (!host) return;

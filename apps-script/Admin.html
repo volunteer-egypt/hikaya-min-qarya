@@ -82,7 +82,7 @@ textarea.big{min-height:220px}
     <div class="tabs" id="tabs">
       <button data-tab="stories" class="active">الحكايات</button>
       <button data-tab="sections">أقسام الموقع</button>
-      <button data-tab="elders">رسائل الكبار</button>
+      <button data-tab="elders">الشيوخ</button>
       <button data-tab="activities">الأنشطة</button>
       <button data-tab="gallery">معرض الصور</button>
       <button data-tab="press">الصحافة والإعلام</button>
@@ -311,7 +311,7 @@ function storyForm(id){
 
 /* ====== أقسام الموقع ====== */
 const SECTION_DEFS = [
-  ["hero","الواجهة الرئيسية"],["elders","رسائل كبار شمال سيناء"],["stories","مكتبة الحكايات"],
+  ["hero","الواجهة الرئيسية"],["elders","الشيوخ"],["stories","مكتبة الحكايات"],
   ["visuals","معرض الصور"],["activities","الأنشطة"],["initiative","عن المبادرة"],
   ["press","الصحافة والإعلام"],["partners","شركاء النجاح"],["team","فريق عمل المبادرة"]
 ];
@@ -334,11 +334,11 @@ function rSections(p){
   }));
 }
 
-/* ====== رسائل الكبار ====== */
+/* ====== الشيوخ ====== */
 function rElders(p){
   const em = DATA.eldersMessages;
   p.innerHTML = `
-    <h2>رسائل كبار شمال سيناء للأطفال</h2>
+    <h2>الشيوخ: رسائل كبار شمال سيناء للأطفال</h2>
     <p class="hint">لا يُنشر اسم أو نص أو صورة أو تسجيل حقيقي إلا بعد اعتماد صاحب المشروع للمتحدثين والمواد.</p>
     <div class="form" style="margin-top:0">
       <h3>عنوان ومقدمة المساحة</h3>

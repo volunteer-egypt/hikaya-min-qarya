@@ -414,9 +414,12 @@
       const t = c.querySelector("h3");
       return a && img && t ? `<a class="hl-card" href="${a.getAttribute("href")}"><img src="${img.getAttribute("src")}" alt=""><span>${esc(t.textContent)}</span></a>` : "";
     }).join("");
+    const _ovr = JSON.parse(localStorage.getItem("hikaya_admin_override_v1") || "null");
+    const _d = _ovr || window.SITE_DATA || {};
+    const _eldersLabel = (_d.meta && _d.meta.sectionLabel_elders) || "الشيوخ";
     const tiles = [
       ["#/stories", "مكتبة الحكايات"],
-      ["#/elders", "رسائل الكبار"],
+      ["#/elders", _eldersLabel],
       ["#/media", "الصور والأنشطة"],
       ["#/initiative", "عن المبادرة"],
       ["#/press", "الصحافة والإعلام"],

@@ -12,7 +12,7 @@
     press:      { label: "الصحافة" },
     partners:   { label: "الشركاء" },
     team:       { label: "الفريق" },
-    elders:     { label: "رسائل الكبار" },
+    elders:     { label: "الشيوخ" },
     meta:       { label: "نصوص الموقع" },
     users:      { label: "المستخدمون" }
   };
@@ -389,7 +389,8 @@
       ["name", "اسم المبادرة"], ["tagline", "الشعار المختصر"], ["motto", "الجملة الختامية"],
       ["description", "الوصف (SEO)"], ["heroEyebrow", "سطر فوق العنوان"], ["heroTitle", "عنوان البطل"],
       ["heroText", "نص البطل"], ["aboutText1", "عن المبادرة ١"], ["aboutText2", "عن المبادرة ٢"],
-      ["aboutTagline", "جملة عن المبادرة"], ["footerCredit", "سطر حقوق إضافي (اختياري)"]
+      ["aboutTagline", "جملة عن المبادرة"], ["sectionLabel_elders", "اسم قسم الشيوخ في القوائم والبلاطات"],
+      ["footerCredit", "سطر حقوق إضافي (اختياري)"]
     ];
     fields.forEach(function (f) {
       box.appendChild(el("label", null, esc(f[1])));
