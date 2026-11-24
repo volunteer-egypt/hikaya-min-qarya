@@ -3,7 +3,7 @@
   "use strict";
   var API = "https://script.google.com/macros/s/AKfycbwvHShezkRmThXHnJJZcP_3uMDtadOCyYVgFN8ZXjyuwdgcv3VhNsReuyv28Cd6MOOY/exec";
   var SITE = "../";
-  var ACT_BASE = location.pathname.replace(/[^/]*$/, ""); // /admin/
+  var ACT_BASE = location.pathname.replace(/[^/]*$/, ""); // /rawi-head/
 
   var SECTIONS = {
     stories:    { label: "الحكايات" },
@@ -59,8 +59,9 @@
     wrap.appendChild(box);
     app.appendChild(wrap);
     function go() {
-      var u = $("#u").value.trim(), p = $("#p").value;
+      var u = $("#u").value, p = $("#p").value;
       if (!u || !p) return;
+      if (/\s/.test(u)) { renderLogin("اسم المستخدم لا يمكن أن يحتوي على مسافات"); return; }
       $("#go").disabled = true;
       api({ action: "login", username: u, password: p }).then(function (res) {
         if (!res.ok) { renderLogin(res.error || "تعذر الدخول"); return; }
@@ -91,6 +92,7 @@
     $("#go").onclick = function () {
       var p1 = $("#p1").value, p2 = $("#p2").value, m = $("#am");
       if (p1.length < 8) { m.className = "msg err"; m.textContent = "كلمة المرور يجب أن تكون ٨ أحرف على الأقل"; return; }
+      if (/\s/.test(p1)) { m.className = "msg err"; m.textContent = "كلمة المرور لا يمكن أن تحتوي على مسافات"; return; }
       if (p1 !== p2) { m.className = "msg err"; m.textContent = "كلمتا المرور غير متطابقتين"; return; }
       $("#go").disabled = true;
       api({ action: "activate", invite: token, password: p1 }).then(function (res) {
@@ -112,10 +114,37 @@
       '<div><strong style="color:var(--green)">لوحة الإدارة</strong> ' +
       '<span class="who">— ' + esc(session.name || session.username) + '</span></div>' +
       '<div><a class="ghost" style="font-size:12.5px;text-decoration:none;border:1px solid var(--green);color:var(--green);border-radius:10px;padding:8px 14px" href="' + SITE + '" target="_blank">معاينة الموقع ↗</a> ' +
+      '<button class="ghost small" id="pw">تغيير كلمة المرور</button> ' +
       '<button class="ghost small" id="out">تسجيل الخروج</button></div>';
     app.appendChild(top);
     $("#out").onclick = function () {
       api({ action: "logout", token: session.token }).finally(function () { clearSession(); renderLogin(); });
+    };
+    $("#pw").onclick = function () {
+      var card = el("div", "card");
+      card.innerHTML = '<h3 class="sec-title">تغيير كلمة المرور</h3><div class="msg" id="pwm" style="display:none"></div>' +
+        '<label>كلمة المرور الحالية</label><input type="password" id="pw0" autocomplete="current-password">' +
+        '<label>الجديدة (٨ أحرف على الأقل، بلا مسافات)</label><input type="password" id="pw1" autocomplete="new-password">' +
+        '<label>تأكيد الجديدة</label><input type="password" id="pw2" autocomplete="new-password">' +
+        '<div style="margin-top:14px"><button id="pwg">حفظ كلمة المرور</button> <button class="ghost small" id="pwx">إلغاء</button></div>';
+      body.prepend(card);
+      $("#pwx").onclick = function () { card.remove(); };
+      $("#pwg").onclick = function () {
+        var mm = $("#pwm", card);
+        var p0 = $("#pw0", card).value, p1 = $("#pw1", card).value, p2 = $("#pw2", card).value;
+        function bad(t) { mm.style.display = "block"; mm.className = "msg err"; mm.textContent = t; }
+        if (p1.length < 8) return bad("كلمة المرور الجديدة يجب أن تكون ٨ أحرف على الأقل");
+        if (/\s/.test(p1)) return bad("كلمة المرور الجديدة لا يمكن أن تحتوي على مسافات");
+        if (p1 !== p2) return bad("كلمتا المرور الجديدتان غير متطابقتين");
+        $("#pwg", card).disabled = true;
+        api({ action: "changePassword", token: session.token, oldPassword: p0, newPassword: p1 }).then(function (res) {
+          $("#pwg", card).disabled = false;
+          if (!res.ok) return bad(res.error || "تعذر التغيير");
+          session.token = res.token; save(); // الجلسات الأخرى أُلغيت في الخادم
+          mm.style.display = "block"; mm.className = "msg ok";
+          mm.textContent = "تم تغيير كلمة المرور ✓ أُغلقت كل الجلسات الأخرى";
+        }).catch(function () { $("#pwg", card).disabled = false; bad("مشكلة في الاتصال"); });
+      };
     };
 
     var tabs = el("div", "tabs");
@@ -454,9 +483,10 @@
     var mk = el("button", null, "إنشاء رابط تفعيل (٢٤ ساعة)");
     mk.onclick = function () {
       var perms = [...pg.querySelectorAll("input:checked")].map(function (c) { return c.value; });
-      if (!un.value.trim() || !perms.length) { msg(false, "أدخل اسم المستخدم واختر قسمًا واحدًا على الأقل"); return; }
+      if (!un.value || !perms.length) { msg(false, "أدخل اسم المستخدم واختر قسمًا واحدًا على الأقل"); return; }
+      if (/\s/.test(un.value)) { msg(false, "اسم المستخدم لا يمكن أن يحتوي على مسافات"); return; }
       mk.disabled = true;
-      api({ action: "inviteCreate", token: session.token, username: un.value.trim(), name: nm.value.trim(), phone: ph.value.trim(), perms: perms })
+      api({ action: "inviteCreate", token: session.token, username: un.value, name: nm.value.trim(), phone: ph.value.trim(), perms: perms })
         .then(function (res) {
           mk.disabled = false;
           if (!res.ok) { msg(false, esc(res.error || "فشل")); return; }

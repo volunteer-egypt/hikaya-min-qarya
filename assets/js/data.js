@@ -15,8 +15,8 @@ const SITE_DATA = window.SITE_DATA = {
     aboutText1: "«حكاية من قرية» بتقرب الأطفال من حكايات الناس وذاكرة المكان؛ من خلال الحكي والصوت والصورة وأنشطة بسيطة تشجّعهم يسمعوا ويسألوا ويكتشفوا ويحافظوا على تراثهم.",
     aboutText2: "الفكرة إن الطفل مش بس مستمع… ممكن يكون صاحب حكاية جديدة، وراوي يحفظ ذاكرة المكان.",
     aboutTagline: "صوت الماضي… حاضر في حكاياتنا",
-    // سطر الحقوق أسفل الموقع — الصياغة معتمدة من صاحب المشروع (v1.4)
-    footerCredit: "الشريك التقني: المركز العربي للتكنولوجيا والتدريب",
+    // سطر الحقوق أسفل الموقع ثابت في الكود (div ثابت) بقرار المالك 23:20 — لا يُدار من هنا
+    footerCredit: "",
     footerCreditPending: false,
     // بعد نشر تطبيق Apps Script: ضع رابط /exec لنشرة "api" هنا (واجهة البيانات العامة)
     apiUrl: "https://script.google.com/macros/s/AKfycbwvHShezkRmThXHnJJZcP_3uMDtadOCyYVgFN8ZXjyuwdgcv3VhNsReuyv28Cd6MOOY/exec",
