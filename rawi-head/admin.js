@@ -37,6 +37,10 @@
       .then(function (r) { return r.json(); });
   }
   function save() { if (session) sessionStorage.setItem("hk_admin", JSON.stringify(session)); }
+  // سطر ACTT الثابت في بطاقات الدخول/التفعيل/كلمة المرور — بتوجيه المالك 00:28، غير قابل للتعديل من اللوحة
+  function acttCredit() {
+    return '<div class="actt-credit"><img src="../assets/img/actt-logo.webp" alt="شعار ACTT" loading="lazy"><span>تم التطوير بواسطة ACTT</span></div>';
+  }
   function load() {
     try { session = JSON.parse(sessionStorage.getItem("hk_admin") || "null"); } catch (e) { session = null; }
   }
@@ -55,7 +59,7 @@
       (errMsg ? '<div class="msg err">' + esc(errMsg) + "</div>" : "") +
       '<label>اسم المستخدم</label><input type="text" id="u" autocomplete="username">' +
       '<label>كلمة المرور</label><input type="password" id="p" autocomplete="current-password">' +
-      '<div style="margin-top:16px"><button id="go" style="width:100%">دخول</button></div>';
+      '<div style="margin-top:16px"><button id="go" style="width:100%">دخول</button></div>' + acttCredit();
     wrap.appendChild(box);
     app.appendChild(wrap);
     function go() {
@@ -86,7 +90,7 @@
       '<div id="am"></div>' +
       '<label>كلمة المرور الجديدة</label><input type="password" id="p1" autocomplete="new-password">' +
       '<label>تأكيد كلمة المرور</label><input type="password" id="p2" autocomplete="new-password">' +
-      '<div style="margin-top:16px"><button id="go" style="width:100%">تفعيل ودخول</button></div>';
+      '<div style="margin-top:16px"><button id="go" style="width:100%">تفعيل ودخول</button></div>' + acttCredit();
     wrap.appendChild(box);
     app.appendChild(wrap);
     $("#go").onclick = function () {
@@ -126,7 +130,7 @@
         '<label>كلمة المرور الحالية</label><input type="password" id="pw0" autocomplete="current-password">' +
         '<label>الجديدة (٨ أحرف على الأقل، بلا مسافات)</label><input type="password" id="pw1" autocomplete="new-password">' +
         '<label>تأكيد الجديدة</label><input type="password" id="pw2" autocomplete="new-password">' +
-        '<div style="margin-top:14px"><button id="pwg">حفظ كلمة المرور</button> <button class="ghost small" id="pwx">إلغاء</button></div>';
+        '<div style="margin-top:14px"><button id="pwg">حفظ كلمة المرور</button> <button class="ghost small" id="pwx">إلغاء</button></div>' + acttCredit();
       body.prepend(card);
       $("#pwx").onclick = function () { card.remove(); };
       $("#pwg").onclick = function () {
