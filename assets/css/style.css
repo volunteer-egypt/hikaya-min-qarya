@@ -450,3 +450,8 @@ body{padding-bottom:80px}
 .tech-logo-slot{position:static;transform:none;margin:16px auto 4px;width:64px;height:64px}
 body{padding-bottom:0}
 @media (max-width:640px){.tech-logo-slot{width:56px;height:56px}body{padding-bottom:0}}
+
+/* سطر تنفيذ الموقع — ثابت في الكود، لا يُدار من اللوحة */
+.actt-credit{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px 14px;background:#f6f1e7;border-top:1px solid rgba(0,0,0,.05)}
+.actt-credit img{width:30px;height:37px;object-fit:contain;opacity:.9}
+.actt-credit span{font-size:12.5px;color:#6b6252;letter-spacing:.1px}
