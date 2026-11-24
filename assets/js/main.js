@@ -177,6 +177,7 @@
           <div class="body"><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p><span class="read">صفحة الحكاية ←</span></div>
         </a>
         <div class="listen"><label>اسمع الحكاية</label><audio controls preload="none" src="${esc(s.audio)}" aria-label="صوت ${esc(s.title)}"></audio></div>
+        <button type="button" class="share-btn" data-share-id="${s.id}" data-share-title="${esc(s.title)}">مشاركة الحكاية ↗</button>
       </article>`).join("");
     document.getElementById("storiesGrid").innerHTML = cards;
 
@@ -432,6 +433,35 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
   }
 
+  /* ---------- مشاركة الحكاية ---------- */
+  function storyUrl(id) { return new URL("story.html?id=" + encodeURIComponent(id), location.href).href; }
+  function shareStory(id, title) {
+    const url = storyUrl(id);
+    const text = "حكاية «" + title + "» من " + (getData().meta.name || "حكاية من قرية");
+    if (navigator.share) {
+      navigator.share({ title: text, text: text, url: url }).catch(function () {});
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { showToast("تم نسخ رابط الحكاية"); }, function () { showToast(url); });
+    } else {
+      showToast(url);
+    }
+  }
+  let toastTimer = null;
+  function showToast(msg) {
+    let t = document.getElementById("hkToast");
+    if (!t) { t = document.createElement("div"); t.id = "hkToast"; t.className = "hk-toast"; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-share-id]");
+    if (!b) return;
+    e.preventDefault();
+    shareStory(b.getAttribute("data-share-id"), b.getAttribute("data-share-title") || "");
+  });
+
   /* ---------- صفحة الحكاية ---------- */
   function renderStoryPage() {
     const d = getData();
@@ -464,6 +494,7 @@
             ${a.images && a.images[0] ? `<div class="activity-card-media"><img src="${esc(a.images[0])}" alt="${esc(a.title)}" loading="lazy"></div>` : ""}
             <div class="activity-card-body"><h3>${esc(a.title)}</h3><p>${esc(a.desc)}</p></div>
           </article>`).join("")}</div></div>` : ""}
+        <button type="button" class="share-btn share-btn-lg" data-share-id="${s.id}" data-share-title="${esc(s.title)}">مشاركة الحكاية ↗</button>
         <a class="back-link" href="index.html#stories">← العودة لمكتبة الحكايات</a>
       </div>`;
   }
