@@ -840,7 +840,7 @@
           <button class="abtn" id="pullBtn">سحب المحتوى من الجدول</button>
           <button class="abtn" id="pushBtn">رفع المحتوى إلى الجدول</button>
         </div>
-        <span class="file-note">خطوات إعداد Apps Script موجودة في ملف README داخل مجلد المشروع (apps-script/Code.gs).</span>
+        <span class="file-note">نسخة مؤرشفة من كود الخادم محفوظة في مجلد Drive الخاص بالمشروع (نسخة خاصة غير عامة).</span>
       </div>`;
 
     $("#saveCredit").addEventListener("click", () => {
