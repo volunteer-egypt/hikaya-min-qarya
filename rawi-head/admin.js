@@ -39,7 +39,7 @@
   function save() { if (session) sessionStorage.setItem("hk_admin", JSON.stringify(session)); }
   // سطر ACTT الثابت في بطاقات الدخول/التفعيل/كلمة المرور — بتوجيه المالك 00:28، غير قابل للتعديل من اللوحة
   function acttCredit() {
-    return '<div class="actt-credit"><img src="../assets/img/actt-logo.webp" alt="شعار ACTT" loading="lazy"><span>تم التطوير بواسطة ACTT</span></div>';
+    return '<div class="actt-credit"><img src="../assets/img/actt-logo.webp" alt="شعار ACTT" loading="lazy"><span>تطوير بواسطة ACTT</span></div><div class="actt-secure">الاتصال مشفّر</div>';
   }
   function load() {
     try { session = JSON.parse(sessionStorage.getItem("hk_admin") || "null"); } catch (e) { session = null; }

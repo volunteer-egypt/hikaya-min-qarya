@@ -52,3 +52,4 @@ h3.sec-title{color:var(--green);font-size:17px;margin-bottom:10px}
 @media(max-width:600px){#app{padding:12px 10px 40px}.card{padding:16px}}
 .actt-credit{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 .actt-credit img{width:20px;height:20px;object-fit:contain}
+.actt-secure{margin-top:6px;text-align:center;color:var(--muted);font-size:11px}
