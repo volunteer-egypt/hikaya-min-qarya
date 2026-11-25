@@ -413,6 +413,8 @@ ${(() => {
       if (p.logo) { mimg.src = p.logo; mimg.alt = "شعار " + p.name; mimg.style.display = ""; }
       else mimg.style.display = "none";
       document.getElementById("partnerModalName").textContent = p.name || "";
+      const mnote = document.getElementById("partnerModalNote");
+      if (mnote) { mnote.textContent = p.note || ""; mnote.style.display = p.note ? "" : "none"; }
       const link = document.getElementById("partnerModalLink");
       if (p.facebook) { link.href = p.facebook; link.style.display = ""; }
       else link.style.display = "none";
