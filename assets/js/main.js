@@ -70,7 +70,7 @@
     d.partners.forEach(function (p) {
       if (!p || String(p.postUrl || "").indexOf(TECH_PARTNER_URL) === -1) return;
       p.isTechPartner = true;
-      if (!p.name) p.name = "الشريك التقني";
+      if (!p.name) p.name = "المركز العربي للتكنولوجيا والتدريب";
       if (!p.logo) p.logo = "assets/img/actt-logo.webp";
       if (!p.note) p.note = "شريك تقني تطوّع بخبرته لتحفظ حكايات أهلنا وتوصل أصواتهم.";
     });
@@ -437,6 +437,7 @@ ${(() => {
           ? `<img class="p-logo" src="${esc(hkImg(p.logo))}" alt="شعار ${esc(p.name)}" loading="lazy"${p.isTechPartner ? ' data-fallback="assets/img/actt-logo.webp"' : ""}>`
           : `<div class="partner-logo-ph"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg><span>الشعار لاحقًا</span></div>`}</div>
         <strong>${esc(p.name)}</strong>
+        ${p.isTechPartner ? '<span class="tech-partner-badge">الشريك التقني</span>' : ""}
         <span class="partner-cta">اضغط لعرض الشعار والصفحة</span>
       </div>`).join("");
 
@@ -450,6 +451,8 @@ ${(() => {
       if (p.logo) { mimg.src = hkImg(p.logo); mimg.alt = "شعار " + p.name; mimg.style.display = ""; }
       else mimg.style.display = "none";
       document.getElementById("partnerModalName").textContent = p.name || "";
+      const mbadge = document.getElementById("partnerModalBadge");
+      if (mbadge) mbadge.style.display = p.isTechPartner ? "" : "none";
       const mnote = document.getElementById("partnerModalNote");
       if (mnote) { mnote.textContent = p.note || ""; mnote.style.display = p.note ? "" : "none"; }
       const link = document.getElementById("partnerModalLink");
