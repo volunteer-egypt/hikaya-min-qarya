@@ -188,7 +188,7 @@ audio{width:100%;height:42px;display:block}
 .contact-modal-eyebrow{color:#9a7136;font-size:12px;font-weight:800;letter-spacing:.04em}
 
 /* الفوتر */
-footer{text-align:center;padding:44px 0 36px;border-top:1px solid rgba(60,77,48,.12);margin-top:30px}
+footer{text-align:center;padding:44px 0 118px;border-top:1px solid rgba(60,77,48,.12);margin-top:30px}
 footer img{width:84px;height:84px;object-fit:contain}
 footer p{font-weight:900;color:var(--green);margin:8px 0 2px}
 footer small{color:var(--muted)}
