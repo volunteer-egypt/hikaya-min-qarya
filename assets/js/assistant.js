@@ -46,7 +46,7 @@
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-label", "مساعد حكاية");
   panel.innerHTML =
-    '<div class="hk-chat-head"><b>مساعد حكاية<span>يسأل ويجاوب عن المبادرة وحكاياتها — تجريبي</span></b><button class="hk-chat-close" type="button" aria-label="إغلاق">×</button></div>' +
+    '<div class="hk-chat-head"><b>مساعد حكاية</b><button class="hk-chat-close" type="button" aria-label="إغلاق">×</button></div>' +
     '<div class="hk-chat-body"></div>' +
     '<form class="hk-chat-form"><input type="text" maxlength="500" placeholder="اكتب سؤالك هنا…" aria-label="سؤالك"><button type="submit">أرسل</button></form>' +
     '<div class="hk-chat-credit">تطوير ACTT — الشريك التقني</div>';
