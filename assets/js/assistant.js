@@ -30,7 +30,13 @@
     ".hk-chat-form input{flex:1;border:1px solid #ddd2c2;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px}",
     ".hk-chat-form button{background:#0e8579;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}",
     ".hk-chat-form button:disabled{opacity:.5;cursor:default}",
-    ".hk-typing{align-self:flex-start;font-size:12px;color:#999;padding:2px 8px}",
+    ".hk-typing{align-self:flex-start;background:#fff;border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}",
+    ".hk-typing-label{font-size:12px;color:#a09480}",
+    ".hk-dots{display:inline-flex;gap:4px;direction:ltr}",
+    ".hk-dots i{width:7px;height:7px;border-radius:50%;background:#c0b3a0;animation:hkDot 1.1s infinite ease-in-out}",
+    ".hk-dots i:nth-child(2){animation-delay:.18s}",
+    ".hk-dots i:nth-child(3){animation-delay:.36s}",
+    "@keyframes hkDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}",
     ".hk-chat-credit{padding:5px 10px 7px;border-top:1px solid #f0e9dd;background:#fbf8f2;text-align:center;font-size:10.5px;color:#a09480}"
   ].join("\n");
   document.head.appendChild(css);
@@ -236,7 +242,7 @@
     sendBtn.disabled = true;
     busy = document.createElement("div");
     busy.className = "hk-typing";
-    busy.textContent = "بيفكر…";
+    busy.innerHTML = '<span class="hk-typing-label">حكاية بتكتب</span><span class="hk-dots"><i></i><i></i><i></i></span>';
     body.appendChild(busy);
     body.scrollTop = body.scrollHeight;
     fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "assistant", q: q, history: hkHist.slice(0, -1).slice(-8) }) })
