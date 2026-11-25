@@ -192,6 +192,7 @@
     var value = {};
     keys.forEach(function (k) { value[k] = content[k]; });
     api({ action: "saveSection", token: session.token, section: sec, value: value }).then(function (res) {
+      if (res && res.ok) { try { localStorage.removeItem("hikaya_remote_cache"); } catch (e) {} }
       done(res);
     }).catch(function () { done({ ok: false, error: "مشكلة في الاتصال" }); });
   }
