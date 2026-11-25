@@ -224,6 +224,13 @@
           var lab = el("label", null, esc(f.label));
           it.appendChild(lab);
           var inp;
+          if (f.type === "checkbox") {
+            inp = el("input"); inp.type = "checkbox";
+            inp.checked = item[f.k] === true || item[f.k] === "true" || item[f.k] === 1;
+            inp.onchange = function () { item[f.k] = inp.checked; };
+            lab.appendChild(inp);
+            return;
+          }
           if (f.type === "textarea") inp = el("textarea");
           else if (f.type === "select") {
             inp = el("select");
@@ -353,9 +360,12 @@
         { k: "logo", label: "الشعار", type: "media-img" },
         { k: "facebook", label: "فيسبوك", type: "url" },
         { k: "postUrl", label: "رابط منشور", type: "url" },
-        { k: "note", label: "ملاحظة" }
+        { k: "note", label: "ملاحظة" },
+        { k: "showHeader", label: " يظهر في الترويسة العلوية ", type: "checkbox" },
+        { k: "showFooter", label: " يظهر في التذييل ", type: "checkbox" },
+        { k: "showPage", label: " يظهر في صفحة الشركاء ", type: "checkbox" }
       ],
-      blank: function () { return { id: "p" + Date.now() }; }
+      blank: function () { return { id: "p" + Date.now(), showHeader: false, showFooter: false, showPage: true }; }
     });
     if (sec === "team") return listEditor(root, sec, {
       key: "team",

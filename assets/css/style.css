@@ -35,6 +35,7 @@ a{color:inherit;text-decoration:none}
 .logos-row .logo-box img{object-fit:contain;display:block}
 .logo-ministry{justify-content:flex-start}
 .logo-ministry img{height:64px;width:auto}
+.logo-youth{gap:10px}
 .logo-youth img{height:64px;width:auto}
 .logo-initiative{justify-content:flex-end;direction:rtl}
 .logo-initiative{display:flex;align-items:center;gap:12px;font-weight:900;color:var(--green)}
@@ -348,6 +349,8 @@ footer small{color:var(--muted)}
 .team-card .ph-frame{width:100%;height:100%;border-radius:50%}
 
 /* ====== سطر الحقوق في الفوتر ====== */
+.footer-partners{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px;flex-wrap:wrap}
+.footer-partners img{height:40px;width:auto;background:#fff;border-radius:8px;padding:4px 8px;object-fit:contain}
 .footer-credit{display:inline-block;margin-top:6px;font-size:13px;color:var(--gold);font-weight:800}
 .footer-credit.is-pending{border:1.5px dashed #d9c391;border-radius:10px;padding:3px 14px;color:#8a6a2f;background:#f7ecd2}
 

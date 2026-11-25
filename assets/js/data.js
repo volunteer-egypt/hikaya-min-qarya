@@ -146,11 +146,11 @@ const SITE_DATA = window.SITE_DATA = {
   press: [],
 
   partners: [
-    { id: "p1", name: "وزارة الشباب والرياضة", logo: "assets/img/logo-ministry.png", facebook: "https://www.facebook.com/emysofficial/", postUrl: "", note: "رابط الصفحة الرسمية للوزارة" },
-    { id: "p2", name: "نادي القيادات الشبابية", logo: "assets/img/logo-youth-club.png", facebook: "https://www.facebook.com/eylcc", postUrl: "", note: "" },
-    { id: "p3", name: "مؤسسة الشجرة للتنمية والفن", logo: "assets/img/partners/tree-foundation.png", facebook: "https://www.facebook.com/TheTreeSinai", postUrl: "", note: "" },
-    { id: "p4", name: "مركز بحوث الصحراء – محطة بحوث شمال سيناء (الشيخ زويد)", logo: "assets/img/partners/desert-research-t.png", facebook: "https://www.facebook.com/profile.php?id=61574134133125", postUrl: "", note: "" },
-    { id: "p5", name: "الوحدة العامة لحماية الطفل – ديوان عام محافظة شمال سيناء", logo: "assets/img/partners/child-protection.png", facebook: "https://www.facebook.com/mona.ali.727428", postUrl: "", note: "" }
+    { id: "p1", name: "وزارة الشباب والرياضة", logo: "assets/img/logo-ministry.png", facebook: "https://www.facebook.com/emysofficial/", postUrl: "", note: "رابط الصفحة الرسمية للوزارة", showHeader: true, showFooter: false, showPage: true },
+    { id: "p2", name: "نادي القيادات الشبابية", logo: "assets/img/logo-youth-club.png", facebook: "https://www.facebook.com/eylcc", postUrl: "", note: "", showHeader: true, showFooter: false, showPage: true },
+    { id: "p3", name: "مؤسسة الشجرة للتنمية والفن", logo: "assets/img/partners/tree-foundation.png", facebook: "https://www.facebook.com/TheTreeSinai", postUrl: "", note: "", showHeader: false, showFooter: false, showPage: true },
+    { id: "p4", name: "مركز بحوث الصحراء – محطة بحوث شمال سيناء (الشيخ زويد)", logo: "assets/img/partners/desert-research-t.png", facebook: "https://www.facebook.com/profile.php?id=61574134133125", postUrl: "", note: "", showHeader: false, showFooter: false, showPage: true },
+    { id: "p5", name: "الوحدة العامة لحماية الطفل – ديوان عام محافظة شمال سيناء", logo: "assets/img/partners/child-protection.png", facebook: "https://www.facebook.com/mona.ali.727428", postUrl: "", note: "", showHeader: false, showFooter: false, showPage: true }
   ],
 
   team: [

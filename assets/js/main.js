@@ -89,6 +89,14 @@
     return v[id] !== false;
   }
 
+  function partnerFlags(p) {
+    function on(v) { return v === true || v === "true" || v === 1 || v === "1"; }
+    var has = p.showHeader !== undefined || p.showFooter !== undefined || p.showPage !== undefined;
+    if (!has) return { header: p.id === "p1" || p.id === "p2", footer: false, page: true };
+    return { header: on(p.showHeader), footer: on(p.showFooter), page: p.showPage === undefined ? true : on(p.showPage) };
+  }
+
+
   // أقسام بلا محتوى حقيقي تُحسب من البيانات نفسها حتى تتفق كل الصفحات (الرئيسية وصفحات الحكايات)
   function computeEmptyRoutes(d) {
     const e = {};
@@ -128,8 +136,12 @@
     document.getElementById("siteHeader").innerHTML = `
       <div class="wrap">
         <div class="logos-row">
-          <div class="logo-box logo-ministry"><img src="${esc(d.logos.ministry)}" alt="شعار وزارة الشباب والرياضة"></div>
-          <div class="logo-box logo-youth"><img src="${esc(d.logos.youthClub)}" alt="شعار نادي القيادات الشبابية"></div>
+${(() => {
+            const hp = (d.partners || []).filter(p => partnerFlags(p).header && p.logo);
+            const im = p => `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name || "شريك")}">`;
+            return `<div class="logo-box logo-ministry">${hp[0] ? im(hp[0]) : ""}</div>
+          <div class="logo-box logo-youth">${hp.slice(1).map(im).join("")}</div>`;
+          })()}
           <a class="logo-box logo-initiative" href="index.html">
             <span class="name">${esc(d.meta.name)}<small>${esc(d.meta.tagline)}</small></span>
             <img src="${esc(d.logos.initiative)}" alt="شعار حكاية من قرية">
@@ -148,7 +160,15 @@
       ${d.meta.footerCredit ? `<br><span class="footer-credit${d.meta.footerCreditPending ? " is-pending" : ""}">${esc(d.meta.footerCredit)}</span>` : ""}
       ${d.logos.techPartner
         ? `<div class="tech-logo-slot has-logo" role="img" aria-label="${esc(d.meta.footerCredit || "الشريك التقني")}"><img src="${esc(d.logos.techPartner)}" alt=""></div>`
-        : ""}`;
+        : ""}
+      ${(() => {
+        const fp = (d.partners || []).filter(p => partnerFlags(p).footer && p.logo);
+        if (!fp.length) return "";
+        return `<div class="footer-partners">` + fp.map(p => {
+          const img = `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name || "شريك")}">`;
+          return p.facebook ? `<a href="${esc(p.facebook)}" target="_blank" rel="noopener" title="${esc(p.name || "")}">${img}</a>` : img;
+        }).join("") + `</div>`;
+      })()}`;
   }
 
   /* ---------- الصفحة الرئيسية ---------- */
@@ -374,7 +394,8 @@
   /* ---------- الشركاء ---------- */
   function renderPartners(d) {
     const grid = document.getElementById("partnersGrid");
-    grid.innerHTML = d.partners.map((p, i) => `
+    const list = (d.partners || []).filter(p => partnerFlags(p).page);
+    grid.innerHTML = list.map((p, i) => `
       <div class="partner-card" role="button" tabindex="0" data-i="${i}" aria-label="عرض شعار ومعلومات ${esc(p.name)}">
         <div class="partner-logo-frame"><img src="${esc(p.logo)}" alt="شعار ${esc(p.name)}" loading="lazy"></div>
         <strong>${esc(p.name)}</strong>
@@ -383,7 +404,7 @@
 
     const modal = document.getElementById("partnerModal");
     const open = i => {
-      const p = d.partners[i];
+      const p = list[i];
       if (!p) return;
       document.getElementById("partnerModalImg").src = p.logo;
       document.getElementById("partnerModalImg").alt = "شعار " + p.name;
