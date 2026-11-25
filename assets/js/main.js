@@ -282,7 +282,7 @@ ${(() => {
         ${realItems.map(m => `
           <article class="elder-card${m.placeholder ? " is-placeholder" : ""}">
             <div class="elder-portrait">
-              ${m.portrait ? `<img src="${esc(m.portrait)}" alt="صورة ${esc(m.name)}" loading="lazy">`
+              ${m.portrait ? `<img src="${esc(m.portrait)}" alt="صورة ${esc(m.name)}" loading="lazy" style="object-position:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%;transform:scale(${(m.portraitFocus && m.portraitFocus.z) || 1});transform-origin:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%">`
                 : `<div class="ph-frame" aria-label="مكان صورة المتحدث"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 19.5c1.6-3.6 4.3-5.4 7.5-5.4s5.9 1.8 7.5 5.4"/></svg><span>الصورة قادمة</span></div>`}
             </div>
             <div class="elder-body">

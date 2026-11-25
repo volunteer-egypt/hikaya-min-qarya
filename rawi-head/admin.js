@@ -263,8 +263,43 @@
             };
             row.appendChild(file); row.appendChild(up);
             it.appendChild(row);
-            if (f.type === "media-img" && item[f.k]) {
+            if (f.type === "media-img" && item[f.k] && !f.focus) {
               var im = el("img", "media-preview"); im.src = item[f.k]; it.appendChild(im);
+            }
+            if (f.type === "media-img" && f.focus && item[f.k]) {
+              var foc = item[f.k + "Focus"] || { x: 50, y: 22, z: 1 };
+              item[f.k + "Focus"] = foc;
+              var wrap = el("div", "focus-editor");
+              wrap.innerHTML = '<div class="focus-frame"><img alt="معاينة الإطار"></div>' +
+                '<label class="focus-zoom">تكبير <input type="range" min="1" max="3" step="0.05"></label>' +
+                '<p class="hint">اسحب الصورة لضبط موضعها داخل الإطار الدائري كما ستظهر في الموقع، ثم احفظ القسم. ملف الصورة الأصلي لا يتغير.</p>';
+              var fimg = wrap.querySelector("img");
+              fimg.src = item[f.k]; fimg.draggable = false;
+              var slider = wrap.querySelector("input");
+              var frame = wrap.querySelector(".focus-frame");
+              function applyF() {
+                fimg.style.objectPosition = foc.x + "% " + foc.y + "%";
+                fimg.style.transform = "scale(" + foc.z + ")";
+                fimg.style.transformOrigin = foc.x + "% " + foc.y + "%";
+                slider.value = foc.z;
+              }
+              slider.oninput = function () { foc.z = +slider.value; applyF(); };
+              var dragging = false, sx = 0, sy = 0, ox = 50, oy = 22;
+              frame.addEventListener("pointerdown", function (e) {
+                dragging = true; sx = e.clientX; sy = e.clientY; ox = foc.x; oy = foc.y;
+                if (frame.setPointerCapture) frame.setPointerCapture(e.pointerId);
+                e.preventDefault();
+              });
+              frame.addEventListener("pointermove", function (e) {
+                if (!dragging) return;
+                var r = frame.getBoundingClientRect();
+                foc.x = Math.min(100, Math.max(0, ox - (e.clientX - sx) / r.width * 100));
+                foc.y = Math.min(100, Math.max(0, oy - (e.clientY - sy) / r.height * 100));
+                applyF();
+              });
+              frame.addEventListener("pointerup", function () { dragging = false; });
+              applyF();
+              it.appendChild(wrap);
             }
           }
         });
@@ -374,7 +409,7 @@
         { k: "id", label: "المعرف" },
         { k: "name", label: "الاسم" },
         { k: "role", label: "الدور" },
-        { k: "photo", label: "الصورة", type: "media-img" },
+        { k: "photo", label: "الصورة", type: "media-img", focus: true },
         { k: "facebook", label: "فيسبوك", type: "url" },
         { k: "phone", label: "الهاتف", type: "tel" }
       ],
@@ -389,7 +424,7 @@
           { k: "id", label: "المعرف" },
           { k: "name", label: "اسم المتحدث" },
           { k: "text", label: "نص الرسالة", type: "textarea" },
-          { k: "portrait", label: "الصورة", type: "media-img" },
+          { k: "portrait", label: "الصورة", type: "media-img", focus: true },
           { k: "audio", label: "الصوت", type: "media-audio" },
           { k: "placeholder", label: "الحالة (معتمد = يظهر في الموقع، مؤقت = مخفي)", type: "select", opts: [
             { value: "true", label: "مؤقت — مخفي بانتظار الاعتماد" },
