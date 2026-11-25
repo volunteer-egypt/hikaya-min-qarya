@@ -41,8 +41,21 @@
     return null;
   }
 
+  // الشريك التقني: استكمال عرض بطاقة المركز التي أنشأها المالك من اللوحة (بتوجيهه 08:29/08:48) —
+// تملأ الحقول الفارغة فقط، وأي قيمة يدخلها بنفسه لاحقًا تَسبق هذه الافتراضات فلا ازدواج.
+  var TECH_PARTNER_URL = "actt-official.pages.dev";
+  function normalizePartners(d) {
+    if (!d || !d.partners) return d;
+    d.partners.forEach(function (p) {
+      if (!p || String(p.postUrl || "").indexOf(TECH_PARTNER_URL) === -1) return;
+      if (!p.name) p.name = "الشريك التقني";
+      if (!p.logo) p.logo = "assets/img/actt-logo.webp";
+      if (!p.note) p.note = "شريك تقني تطوّع بخبرته لتحفظ حكايات أهلنا وتوصل أصواتهم.";
+    });
+    return d;
+  }
   function getData() {
-    return getLocalData() || window.SITE_DATA;
+    return normalizePartners(getLocalData() || window.SITE_DATA);
   }
 
   // مزامنة اختيارية من جدول Google Sheet عبر Apps Script
