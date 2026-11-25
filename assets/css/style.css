@@ -446,6 +446,8 @@ body{padding-bottom:80px}
 /* بلاطة «رسائل الكبار» مميّزة بإطار ذهبي لا بلون مصمت حتى لا تُشبه حالة التحديد في القائمة */
 .menu-tile[href="#/elders"]{background:#fdf3dc;border:2px solid var(--gold);color:#8a6d1f}
 #hkBackBar{padding-top:12px}
+body.subroute .section{padding-top:20px}
+body.subroute #hkBackBar{padding-top:8px}
 #hkBackBar a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:800;color:var(--green);text-decoration:none;font-size:14px;box-shadow:var(--shadow-sm)}
 @media(max-width:640px){.menu-tiles{grid-template-columns:1fr 1fr;gap:10px}.menu-tile{font-size:14.5px;padding:15px 8px}}
 

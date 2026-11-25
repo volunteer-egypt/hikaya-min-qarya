@@ -273,6 +273,7 @@ ${(() => {
     const em = d.eldersMessages;
     if (!em || !em.items) { host.innerHTML = ""; return; }
     const realItems = em.items.filter(m => !m.placeholder);
+    if (!realItems.length) { host.innerHTML = ""; return; }
     host.innerHTML = `
       <div class="elders-head">
         <span class="eyebrow">${esc(em.title)}</span>

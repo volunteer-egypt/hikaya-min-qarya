@@ -451,6 +451,7 @@
     document.querySelectorAll(".reveal:not(.in)").forEach(el => { if (el.offsetParent !== null) el.classList.add("in"); });
     const bar = document.getElementById("hkBackBar");
     if (bar) bar.style.display = r === "" ? "none" : "block";
+    document.body.classList.toggle("subroute", r !== "");
     document.querySelectorAll(".nav-row a").forEach(a => {
       const href = a.getAttribute("href") || "";
       let route = null;
