@@ -19,9 +19,7 @@ const SITE_DATA = window.SITE_DATA = {
     footerCredit: "",
     footerCreditPending: false,
     // بعد نشر تطبيق Apps Script: ضع رابط /exec لنشرة "api" هنا (واجهة البيانات العامة)
-    apiUrl: "https://script.google.com/macros/s/AKfycbwvHShezkRmThXHnJJZcP_3uMDtadOCyYVgFN8ZXjyuwdgcv3VhNsReuyv28Cd6MOOY/exec",
-    // ورابط /exec لنشرة "admin" (لوحة الإدارة) هنا — إن بقي فارغًا يُستخدم admin.html المحلي
-    adminUrl: "https://script.google.com/macros/s/AKfycbx3x_A7Z6gYj35-HBn4BGN9cgkW269XRwWSJy0QKLtEfn-tcWvuF5yKIwEhGFiGEKCv/exec"
+    apiUrl: "https://script.google.com/macros/s/AKfycbwvHShezkRmThXHnJJZcP_3uMDtadOCyYVgFN8ZXjyuwdgcv3VhNsReuyv28Cd6MOOY/exec"
   },
 
   // إظهار/إخفاء أقسام الموقع من لوحة الإدارة
