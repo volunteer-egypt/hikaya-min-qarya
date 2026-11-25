@@ -380,9 +380,13 @@
           { k: "name", label: "اسم المتحدث" },
           { k: "text", label: "نص الرسالة", type: "textarea" },
           { k: "portrait", label: "الصورة", type: "media-img" },
-          { k: "audio", label: "الصوت", type: "media-audio" }
+          { k: "audio", label: "الصوت", type: "media-audio" },
+          { k: "placeholder", label: "الحالة (معتمد = يظهر في الموقع، مؤقت = مخفي)", type: "select", opts: [
+            { value: "true", label: "مؤقت — مخفي بانتظار الاعتماد" },
+            { value: "", label: "معتمد — يظهر في الموقع" }
+          ] }
         ],
-        blank: function () { return { id: "em-" + Date.now() }; }
+        blank: function () { return { id: "em-" + Date.now(), placeholder: "true" }; }
       });
     }
     if (sec === "meta") return renderMeta(root);
@@ -393,6 +397,8 @@
   listEditor = function (root, sec, spec, afterSave) {
     if (spec.key === "eldersMessages") {
       var em = content.eldersMessages || (content.eldersMessages = { title: "", intro: "", items: [] });
+      // وحّد قيمة الحالة: true المنطقية و"1" و"true" كلها تعني «مؤقت»، وغير ذلك «معتمد»
+      em.items.forEach(function (m) { m.placeholder = (m.placeholder === true || m.placeholder === "true" || m.placeholder === "1") ? "true" : ""; });
       var sub = Object.assign({}, spec, { key: "items", saveKeys: ["eldersMessages"] });
       var proxyRoot = el("div");
       var head = el("div", "card");
