@@ -191,12 +191,33 @@ ${(() => {
       </div>`;
   }
 
+  /* ---------- روابط التواصل الاجتماعي (تُدار من لوحة الإدارة) ---------- */
+  const SOCIAL_ICONS = {
+    facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.25-1.5 1.55-1.5h1.65V4.6c-.3-.04-1.3-.1-2.45-.1-2.4 0-4.05 1.47-4.05 4.17v2.33H7.5V14h2.7v8h3.3z"/></svg>',
+    whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.2-.7l.5-.6c.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1.1 2.7c.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.4-.3z"/></svg>',
+    instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8A3.2 3.2 0 1 0 12 15.2 3.2 3.2 0 0 0 12 8.8zm0-2.1a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6zm6.8-.4a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0zM12 4.2c-2.5 0-2.8 0-3.8.1a5 5 0 0 0-1.7.3 3.4 3.4 0 0 0-2 2 5 5 0 0 0-.3 1.7c-.1 1-.1 1.3-.1 3.8s0 2.8.1 3.8a5 5 0 0 0 .3 1.7 3.4 3.4 0 0 0 2 2 5 5 0 0 0 1.7.3c1 .1 1.3.1 3.8.1s2.8 0 3.8-.1a5 5 0 0 0 1.7-.3 3.4 3.4 0 0 0 2-2 5 5 0 0 0 .3-1.7c.1-1 .1-1.3.1-3.8s0-2.8-.1-3.8a5 5 0 0 0-.3-1.7 3.4 3.4 0 0 0-2-2 5 5 0 0 0-1.7-.3c-1-.1-1.3-.1-3.8-.1zM12 2.5c2.6 0 2.9 0 3.9.1a6.7 6.7 0 0 1 2.2.4 5.1 5.1 0 0 1 3 3 6.7 6.7 0 0 1 .4 2.2c.1 1 .1 1.3.1 3.9s0 2.9-.1 3.9a6.7 6.7 0 0 1-.4 2.2 5.1 5.1 0 0 1-3 3 6.7 6.7 0 0 1-2.2.4c-1 .1-1.3.1-3.9.1s-2.9 0-3.9-.1a6.7 6.7 0 0 1-2.2-.4 5.1 5.1 0 0 1-3-3 6.7 6.7 0 0 1-.4-2.2c-.1-1-.1-1.3-.1-3.9s0-2.9.1-3.9a6.7 6.7 0 0 1 .4-2.2 5.1 5.1 0 0 1 3-3 6.7 6.7 0 0 1 2.2-.4c1-.1 1.3-.1 3.9-.1z"/></svg>',
+    youtube: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 8s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.6 4.4 12 4.4 12 4.4s-4.6 0-7.7.3c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S.8 9.9.8 11.8v1.7c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.3 7.6.3s4.6 0 7.7-.3c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8v-1.7C23.2 9.9 23 8 23 8zM9.8 15.3V8.4l6.1 3.5-6.1 3.4z"/></svg>',
+    tiktok: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.8 2c.4 2.2 1.8 3.6 4.2 3.8v3c-1.6 0-3-.5-4.2-1.3v6.6A6.1 6.1 0 1 1 10.7 8v3.2a2.9 2.9 0 1 0 2.9 2.9V2h3.2z"/></svg>',
+    telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 4.6 3.3 11.8c-1.2.5-1.1 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.7.4.9 1 .9.5 0 .7-.2 1-.5l2.3-2.3 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.9c.3-1.2-.4-1.8-1.5-1.7zM7.7 13.6l10.9-6.9c.5-.3 1-.1.6.2l-9.3 8.4-.4 3.9-1.8-5.6z"/></svg>',
+    x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 3H21l-7.1 8.2L22.2 21h-6.6l-5.1-6.1L4.6 21H1.3l7.6-8.7L1.6 3h6.7l4.6 5.5L17.7 3zm-1.2 16h1.8L7.1 4.9H5.2L16.5 19z"/></svg>',
+    site: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a1 1 0 0 0 1.4 1.4l3-3a3 3 0 0 0-4.2-4.2l-1.7 1.7M13.4 10.6a1 1 0 0 0-1.4-1.4l-3 3a3 3 0 0 0 4.2 4.2l1.7-1.7"/></svg>'
+  };
+  function socialsRow(d, extraCls) {
+    const items = (d && d.socials || []).filter(s => s && s.url);
+    if (!items.length) return "";
+    return `<div class="social-row ${extraCls || ""}" role="group" aria-label="روابط التواصل الاجتماعي">` + items.map(s => {
+      const kind = SOCIAL_ICONS[s.kind] ? s.kind : "site";
+      return `<a class="social-ic ${esc(kind)}" href="${esc(s.url)}" target="_blank" rel="noopener" title="${esc(s.label || "رابط")}" aria-label="${esc(s.label || "رابط")}">${SOCIAL_ICONS[kind]}</a>`;
+    }).join("") + `</div>`;
+  }
+
   function renderFooter() {
     const d = getData();
     document.getElementById("siteFooter").innerHTML = `
       <img src="${esc(d.logos.initiative)}" alt="شعار المبادرة">
       <p>${esc(d.meta.name)} · ${esc(d.meta.tagline)}</p>
       <small>${esc(d.meta.motto)}</small>
+      ${socialsRow(d, "footer-socials")}
       ${d.meta.footerCredit ? `<br><span class="footer-credit${d.meta.footerCreditPending ? " is-pending" : ""}">${esc(d.meta.footerCredit)}</span>` : ""}
       ${d.logos.techPartner
         ? `<div class="tech-logo-slot has-logo" role="img" aria-label="${esc(d.meta.footerCredit || "الشريك التقني")}"><img src="${esc(d.logos.techPartner)}" alt=""></div>`
@@ -503,6 +524,17 @@ ${(() => {
       document.getElementById("teamContactActions").innerHTML = `
         ${m.facebook ? `<a class="fb-link" href="${esc(m.facebook)}" target="_blank" rel="noopener noreferrer">صفحة فيسبوك ↗</a>` : ""}
         ${m.phone ? `<a class="phone-link" href="tel:${esc(String(m.phone).replace(/[^0-9+]/g, ""))}">اتصال مباشر · ${esc(m.phone)}</a>` : ""}`;
+      const mSocials = socialsRow(d, "modal-socials");
+      const mNote = document.querySelector("#teamContactModal .contact-modal-note");
+      if (mNote) {
+        let holder = document.getElementById("teamContactSocials");
+        if (!holder) {
+          holder = document.createElement("div");
+          holder.id = "teamContactSocials";
+          mNote.parentNode.insertBefore(holder, mNote);
+        }
+        holder.innerHTML = mSocials ? `<span class="modal-socials-label">تابعوا المبادرة</span>${mSocials}` : "";
+      }
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
     };

@@ -180,6 +180,19 @@
       return { text: "وسيلة التواصل دي مش متاحة على الموقع حاليًا.", actions: [] };
     }
 
+    // ١ب) روابط المبادرة على السوشيال (تُدار من لوحة الإدارة وتظهر هنا أزرارًا)
+    if (/تابع|سوشيال|صفحه المباد|فيسبوك المباد|قناه المباد|جروب|لينك المباد|حساب المباد|حسابات المباد/.test(qn)) {
+      var socials = (d.socials || []).filter(function (s) { return s && s.url; });
+      if (socials.length) {
+        var kindMap = { whatsapp: "wa", facebook: "fb", site: "site" };
+        var socialActs = socials.map(function (s) {
+          return { label: "🔗 " + (s.label || "رابط"), url: s.url, kind: kindMap[s.kind] || "site" };
+        });
+        return { text: "دي روابط المبادرة الرسمية، دوس على اللي يناسبك 👇", actions: socialActs };
+      }
+      return { text: "روابط المبادرة على السوشيال مش متاحة على الموقع حاليًا.", actions: [] };
+    }
+
     // ٢) حكاية بعينها
     var genericStoryWords = { "حكايه": 1, "قصه": 1 };
     var stories = (d.stories || []).filter(function (st) {

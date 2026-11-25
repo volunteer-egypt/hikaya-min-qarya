@@ -14,6 +14,7 @@
     team:       { label: "الفريق" },
     elders:     { label: "الشيوخ" },
     meta:       { label: "نصوص الموقع" },
+    socials:    { label: "روابط التواصل" },
     users:      { label: "المستخدمون" }
   };
 
@@ -221,7 +222,7 @@
     if (!allowed.length) { body.innerHTML = '<div class="msg err">لا تملك صلاحية أي قسم بعد. تواصل مع مدير المبادرة.</div>'; return; }
 
     var current = "home";
-    var HOME_ICONS = { stories: "📖", gallery: "🖼️", activities: "📅", press: "📰", partners: "🤝", team: "👥", elders: "🎙️", meta: "✏️", users: "🔑" };
+    var HOME_ICONS = { stories: "📖", gallery: "🖼️", activities: "📅", press: "📰", partners: "🤝", team: "👥", elders: "🎙️", meta: "✏️", users: "🔑", socials: "🔗" };
     function drawTabs() {
       tabs.innerHTML = "";
       var hb = el("button", current === "home" ? "on" : "", "الرئيسية");
@@ -501,6 +502,26 @@
       blank: function () { return { id: "p" + Date.now(), showHeader: false, showFooter: false, showPage: true }; }
       });
     }
+    if (sec === "socials") return listEditor(root, sec, {
+      key: "socials",
+      title: function (s) { return s.label || "رابط"; },
+      fields: [
+        { k: "id", label: "المعرف" },
+        { k: "label", label: "الاسم (مثال: صفحة المبادرة على فيسبوك)" },
+        { k: "url", label: "الرابط", type: "url" },
+        { k: "kind", label: "المنصة", type: "select", opts: [
+          { value: "facebook", label: "فيسبوك" },
+          { value: "whatsapp", label: "واتساب" },
+          { value: "instagram", label: "إنستجرام" },
+          { value: "youtube", label: "يوتيوب" },
+          { value: "tiktok", label: "تيك توك" },
+          { value: "telegram", label: "تيليجرام" },
+          { value: "x", label: "إكس (تويتر)" },
+          { value: "site", label: "موقع أو رابط آخر" }
+        ] }
+      ],
+      blank: function () { return { id: "s" + Date.now(), kind: "facebook", label: "", url: "" }; }
+    });
     if (sec === "team") return listEditor(root, sec, {
       key: "team",
       title: function (m) { return m.name || "عضو"; },
