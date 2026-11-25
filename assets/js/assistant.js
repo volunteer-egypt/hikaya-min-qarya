@@ -23,7 +23,8 @@
     ".hk-chat-form input{flex:1;border:1px solid #ddd2c2;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px}",
     ".hk-chat-form button{background:#0e8579;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}",
     ".hk-chat-form button:disabled{opacity:.5;cursor:default}",
-    ".hk-typing{align-self:flex-start;font-size:12px;color:#999;padding:2px 8px}"
+    ".hk-typing{align-self:flex-start;font-size:12px;color:#999;padding:2px 8px}",
+    ".hk-chat-credit{padding:5px 10px 7px;border-top:1px solid #f0e9dd;background:#fbf8f2;text-align:center;font-size:10.5px;color:#a09480}"
   ].join("\n");
   document.head.appendChild(css);
 
@@ -40,7 +41,8 @@
   panel.innerHTML =
     '<div class="hk-chat-head"><b>مساعد حكاية<span>يسأل ويجاوب عن المبادرة وحكاياتها — تجريبي</span></b><button class="hk-chat-close" type="button" aria-label="إغلاق">×</button></div>' +
     '<div class="hk-chat-body"></div>' +
-    '<form class="hk-chat-form"><input type="text" maxlength="500" placeholder="اكتب سؤالك هنا…" aria-label="سؤالك"><button type="submit">أرسل</button></form>';
+    '<form class="hk-chat-form"><input type="text" maxlength="500" placeholder="اكتب سؤالك هنا…" aria-label="سؤالك"><button type="submit">أرسل</button></form>' +
+    '<div class="hk-chat-credit">تطوير ACTT — الشريك التقني</div>';
 
   document.body.appendChild(fab);
   document.body.appendChild(panel);
