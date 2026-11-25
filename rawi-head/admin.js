@@ -125,7 +125,7 @@
     app.appendChild(wrap);
     function go() {
       var u = $("#u").value, p = $("#p").value;
-      if (!u || !p) return;
+      if (!u || !p) { renderLogin("أدخل اسم المستخدم وكلمة المرور"); return; }
       if (/\s/.test(u)) { renderLogin("اسم المستخدم لا يمكن أن يحتوي على مسافات"); return; }
       $("#go").disabled = true;
       api({ action: "login", username: u, password: p }).then(function (res) {
