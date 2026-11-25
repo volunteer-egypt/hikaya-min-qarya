@@ -386,7 +386,15 @@
       ],
       blank: function () { return { id: "pr-" + Date.now(), photos: [] }; }
     });
-    if (sec === "partners") return listEditor(root, sec, {
+    if (sec === "partners") {
+      (content.partners || []).forEach(function (p) {
+        if (p.showHeader === undefined && p.showFooter === undefined && p.showPage === undefined) {
+          p.showHeader = (p.id === "p1" || p.id === "p2");
+          p.showFooter = false;
+          p.showPage = true;
+        }
+      });
+      return listEditor(root, sec, {
       key: "partners",
       title: function (p) { return p.name || "شريك"; },
       fields: [
@@ -401,7 +409,8 @@
         { k: "showPage", label: " يظهر في صفحة الشركاء ", type: "checkbox" }
       ],
       blank: function () { return { id: "p" + Date.now(), showHeader: false, showFooter: false, showPage: true }; }
-    });
+      });
+    }
     if (sec === "team") return listEditor(root, sec, {
       key: "team",
       title: function (m) { return m.name || "عضو"; },
