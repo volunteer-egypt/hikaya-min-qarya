@@ -89,6 +89,16 @@
     return v[id] !== false;
   }
 
+  // أقسام بلا محتوى حقيقي تُحسب من البيانات نفسها حتى تتفق كل الصفحات (الرئيسية وصفحات الحكايات)
+  function computeEmptyRoutes(d) {
+    const e = {};
+    if (!((d && d.press) || []).length) e.press = true;
+    const em = d && d.eldersMessages;
+    const realElders = em && em.items ? em.items.filter(m => !m.placeholder) : [];
+    if (!realElders.length) e.elders = true;
+    return e;
+  }
+
   function applySectionVisibility(d) {
     Object.keys(SECTION_LABELS).forEach(id => {
       if (id === "elders") {
@@ -104,6 +114,7 @@
   /* ---------- الهيدر ---------- */
   function renderHeader(active) {
     const d = getData();
+    window.HK_EMPTY_ROUTES = computeEmptyRoutes(d);
     const links = [
       ["index.html", "الرئيسية", ""],
       ["index.html#/stories", "الحكايات", "stories"],
@@ -113,7 +124,7 @@
       ["index.html#/press", "الصحافة والإعلام", "press"],
       ["index.html#/partners", "الشركاء", "partners"],
       ["index.html#/team", "الفريق", "team"]
-    ].filter(l => l[2] === "" || sectionVisible(d, l[2]));
+    ].filter(l => l[2] === "" || (sectionVisible(d, l[2]) && !window.HK_EMPTY_ROUTES[l[2]]));
     document.getElementById("siteHeader").innerHTML = `
       <div class="wrap">
         <div class="logos-row">
