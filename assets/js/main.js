@@ -89,15 +89,19 @@
     if (!url) return;
     try {
       const cached = JSON.parse(localStorage.getItem("hikaya_remote_cache") || "null");
-      if (cached && Date.now() - cached.t < 5 * 60 * 1000) return; // كاش 5 دقائق
-      const res = await fetch(url + (url.includes("?") ? "&" : "?") + "action=data");
-      if (!res.ok) return;
+      if (cached && Date.now() - cached.t < 60 * 1000) return false; // إعادة تحقق كل دقيقة
+      const res = await fetch(url + (url.includes("?") ? "&" : "?") + "action=data", { cache: "no-store" });
+      if (!res.ok) return false;
       const data = await res.json();
       if (data && data.stories && data.stories.length) {
-        localStorage.setItem(OVERRIDE_KEY, JSON.stringify(data));
+        const prev = localStorage.getItem(OVERRIDE_KEY) || JSON.stringify(window.SITE_DATA);
+        const next = JSON.stringify(data);
+        localStorage.setItem(OVERRIDE_KEY, next);
         localStorage.setItem("hikaya_remote_cache", JSON.stringify({ t: Date.now() }));
+        return prev !== next; // هل تغيّر المحتوى فعلًا؟
       }
     } catch (e) { /* الشبكة غير متاحة: نكمل بالنسخة المحلية */ }
+    return false;
   }
 
   const AR_NUM = ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"];
@@ -587,13 +591,17 @@ ${(() => {
   }
 
   /* ---------- تشغيل ---------- */
-  document.addEventListener("DOMContentLoaded", async () => {
-    await syncFromSheet();
+  document.addEventListener("DOMContentLoaded", () => {
     const page = document.body.dataset.page;
-    renderHeader(page === "home" ? "" : "stories");
-    renderFooter();
-    if (page === "home") renderHome();
-    if (page === "story") renderStoryPage();
-    document.dispatchEvent(new CustomEvent("hikaya:rendered"));
+    const renderAll = () => {
+      renderHeader(page === "home" ? "" : "stories");
+      renderFooter();
+      if (page === "home") renderHome();
+      if (page === "story") renderStoryPage();
+      document.dispatchEvent(new CustomEvent("hikaya:rendered"));
+    };
+    // عرض فوري من المخزّن/المضمّن، ثم تحقق في الخلفية: لو المحتوى اتغيّر من اللوحة نعيد التحميل مرة واحدة
+    renderAll();
+    syncFromSheet().then(changed => { if (changed) location.reload(); });
   });
 })();
