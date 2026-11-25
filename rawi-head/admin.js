@@ -616,6 +616,23 @@
   }
 
   /* ---------- المستخدمون ---------- */
+  // نتيجة إنشاء دعوة: الرابط + أزرار النسخ/واتساب/البريد + تنبيه واضح (الإرسال يدوي دائمًا)
+  function inviteDone(res, box, msg) {
+    var link = location.origin + ACT_BASE + "#/activate/" + res.invite;
+    var welcome = buildWelcome(res.name || res.username, link);
+    var wa = res.phone ? "https://wa.me/" + String(res.phone).replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(welcome) : "";
+    var mailTo = res.email ? "mailto:" + res.email + "?subject=" + encodeURIComponent("دعوة للانضمام إلى لوحة إدارة «حكاية من قرية»") + "&body=" + encodeURIComponent(welcome) : "";
+    msg(true,
+      "تم إنشاء الدعوة ✓ (أُبطل أي رابط سابق لهذا المستخدم)<br>رابط التفعيل (يظهر هنا فقط):<br><code style=\"font-size:11px;direction:ltr;display:block;word-break:break-all\">" + esc(link) + "</code>" +
+      '<div class="actions"><button class="small" id="cp">نسخ الرابط</button>' +
+      (wa ? ' <a class="wa" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") +
+      (mailTo ? ' <a class="wa mail" href="' + esc(mailTo) + '">فتح البريد مع الرسالة</a>' : "") + "</div>" +
+      '<p class="hint">الإرسال يدوي منك وحدك: اختر واتساب أو البريد فتُفتح الرسالة جاهزة وترسلها بنفسك — لا يُرسل الموقع شيئًا تلقائيًا.</p>');
+    $("#cp", box).onclick = function () { navigator.clipboard.writeText(link); $("#cp", box).textContent = "تم النسخ ✓"; };
+    showToast(true, "تم إنشاء رابط تفعيل جديد ✓");
+    var um = $("#um", box); if (um) um.scrollIntoView({ block: "start", behavior: "smooth" });
+    return { link: link, wa: wa };
+  }
   function renderUsers(root) {
     var box = el("div", "card");
     box.innerHTML = '<h3 class="sec-title">المستخدمون والدعوات</h3><div class="msg" id="um" style="display:none"></div>';
@@ -637,13 +654,13 @@
     cr.appendChild(el("label", null, "الأقسام المسموحة"));
     var pg = el("div", "perm-grid");
     Object.keys(SECTIONS).forEach(function (s) {
-      if (s === "users") return;
       var lab = el("label");
       var cb = el("input"); cb.type = "checkbox"; cb.value = s;
       lab.appendChild(cb); lab.appendChild(document.createTextNode(SECTIONS[s].label));
       pg.appendChild(lab);
     });
     cr.appendChild(pg);
+    cr.appendChild(el("p", "hint", "صلاحية «المستخدمون» تتيح إدارة الدعوات والمستخدمين — امنحها فقط لمن تثق به ثقة كاملة."));
     var mk = el("button", null, "إنشاء رابط تفعيل (٢٤ ساعة)");
     mk.onclick = function () {
       var perms = [...pg.querySelectorAll("input:checked")].map(function (c) { return c.value; });
@@ -668,17 +685,7 @@
           .then(function (res) {
             mk.disabled = false;
             if (!res.ok) { msg(false, esc(res.error || "فشل")); return; }
-            var link = location.origin + ACT_BASE + "#/activate/" + res.invite;
-            var welcome = buildWelcome(res.name || res.username, link);
-            var wa = res.phone ? "https://wa.me/" + String(res.phone).replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(welcome) : "";
-            var mailTo = res.email ? "mailto:" + res.email + "?subject=" + encodeURIComponent("دعوة للانضمام إلى لوحة إدارة «حكاية من قرية»") + "&body=" + encodeURIComponent(welcome) : "";
-            msg(true,
-              "تم إنشاء الدعوة ✓<br>رابط التفعيل (يظهر مرة واحدة):<br><code style=\"font-size:11px;direction:ltr;display:block;word-break:break-all\">" + esc(link) + "</code>" +
-              '<div class="actions"><button class="small" id="cp">نسخ الرابط</button>' +
-              (wa ? ' <a class="wa" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") +
-              (mailTo ? ' <a class="wa mail" href="' + esc(mailTo) + '">فتح البريد مع الرسالة</a>' : "") + "</div>" +
-              '<p class="hint">الإرسال يدوي منك وحدك: اختر واتساب أو البريد فتُفتح الرسالة جاهزة وترسلها بنفسك — لا يُرسل الموقع شيئًا تلقائيًا.</p>');
-            $("#cp", box).onclick = function () { navigator.clipboard.writeText(link); $("#cp", box).textContent = "تم النسخ ✓"; };
+            inviteDone(res, box, msg);
             drawList();
           });
       });
@@ -702,26 +709,31 @@
             '<td><span class="pill ' + (u.active ? "on" : "off") + '">' + (u.active ? "نشط" : (u.hasPassword ? "موقوف" : "بانتظار التفعيل")) + "</span></td>";
           var td = el("td");
           if (u.phone) {
-            var w = el("a", "wa", "واتساب");
-            w.target = "_blank"; w.rel = "noopener";
-            w.href = "https://wa.me/" + u.phone.replace(/[^0-9]/g, "");
+            var w = el("button", "small wa-btn", "واتساب");
+            w.title = "ينشئ رابط تفعيل جديدًا ويفتح واتساب برسالة الترحيب والرابط (يُبطل أي رابط سابق)";
+            w.onclick = function () {
+              w.disabled = true;
+              var win = window.open("about:blank", "_blank");
+              api({ action: "inviteCreate", token: session.token, username: u.username, name: u.name, phone: u.phone, email: u.email || "", perms: u.perms }).then(function (r) {
+                w.disabled = false;
+                if (r.ok) {
+                  var d = inviteDone(r, box, msg);
+                  if (win && d.wa) win.location.href = d.wa;
+                  drawList();
+                } else { if (win) win.close(); msg(false, esc(r.error || "فشل")); }
+              }).catch(function () { w.disabled = false; if (win) win.close(); msg(false, "مشكلة في الاتصال"); });
+            };
             td.appendChild(w);
           }
           var re = el("button", "small ghost", "دعوة جديدة");
           re.title = "إبطال الرابط السابق وإنشاء رابط تفعيل جديد";
           re.onclick = function () {
+            re.disabled = true;
             api({ action: "inviteCreate", token: session.token, username: u.username, name: u.name, phone: u.phone, email: u.email || "", perms: u.perms }).then(function (r) {
-              if (r.ok) {
-                var link = location.origin + ACT_BASE + "#/activate/" + r.invite;
-                var welcome = buildWelcome(r.name || r.username, link);
-                var wa = r.phone ? "https://wa.me/" + String(r.phone).replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(welcome) : "";
-                var mailTo = r.email ? "mailto:" + r.email + "?subject=" + encodeURIComponent("دعوة للانضمام إلى لوحة إدارة «حكاية من قرية»") + "&body=" + encodeURIComponent(welcome) : "";
-                msg(true, 'دعوة جديدة لـ ' + esc(u.username) + ':<br><code style="font-size:11px;direction:ltr;display:block;word-break:break-all">' + esc(link) + "</code>" +
-                  '<div class="actions">' +
-                  (wa ? '<a class="wa" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") +
-                  (mailTo ? ' <a class="wa mail" href="' + esc(mailTo) + '">فتح البريد مع الرسالة</a>' : "") + "</div>");
-              } else msg(false, esc(r.error || "فشل"));
-            });
+              re.disabled = false;
+              if (r.ok) { inviteDone(r, box, msg); drawList(); }
+              else msg(false, esc(r.error || "فشل"));
+            }).catch(function () { re.disabled = false; msg(false, "مشكلة في الاتصال"); });
           };
           td.appendChild(re);
           var rv = el("button", "small ghost", u.active ? "إيقاف" : "تفعيل");
@@ -729,10 +741,13 @@
             if (u.active) {
               api({ action: "userRevoke", token: session.token, username: u.username }).then(function (r) { msg(r.ok, r.ok ? "تم الإيقاف وأُلغيت جلساته وروابطه" : esc(r.error || "")); drawList(); });
             } else {
-              api({ action: "userUpdate", token: session.token, username: u.username, perms: u.perms }).then(function () {
-                // إعادة التفعيل عبر تحديث (active تُدار بالخادم عند الحاجة)
+              rv.disabled = true;
+              api({ action: "userUnrevoke", token: session.token, username: u.username }).then(function (r) {
+                rv.disabled = false;
+                if (r.ok) { showToast(true, "تم إعادة التفعيل ✓"); msg(true, "أُعيد تفعيل الحساب — يدخل بكلمة مروره الحالية."); }
+                else msg(false, esc(r.error || "فشل"));
                 drawList();
-              });
+              }).catch(function () { rv.disabled = false; msg(false, "مشكلة في الاتصال"); });
             }
           };
           td.appendChild(rv);

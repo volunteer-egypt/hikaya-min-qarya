@@ -101,3 +101,6 @@ h3.sec-title{color:var(--green);font-size:17px;margin-bottom:10px}
 .cf-table th{width:130px;color:var(--green);vertical-align:top}
 .cf-table td{word-break:break-word}
 a.wa.mail{color:#1d5f8a;border-color:#1d5f8a}
+
+button.wa-btn{display:inline-flex;align-items:center;gap:4px;color:#128C4A;font-weight:700;font-size:12.5px;background:#fff;border:1px solid #128C4A;border-radius:8px;padding:5px 10px}
+button.wa-btn:hover{background:#eef7f1}
