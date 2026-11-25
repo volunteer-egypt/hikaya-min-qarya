@@ -33,7 +33,7 @@
     ".hk-msg{animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
     "@keyframes hkMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}",
     ".hk-actions{animation:hkMsgIn .3s .05s cubic-bezier(.2,.8,.2,1) both}",
-    ".hk-typing{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;min-height:42px;background:linear-gradient(180deg,#fff,#fdfbf7);border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;box-shadow:0 2px 8px rgba(14,133,121,.07);animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
+    ".hk-typing{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:8px 13px;min-height:42px;background:linear-gradient(180deg,#fff,#fdfbf7);border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;box-shadow:0 2px 8px rgba(14,133,121,.07);animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
     ".hk-typing-av{position:relative;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#12a390,#0e8579);color:#fff;display:grid;place-items:center;font-size:.8rem;flex:none}",
     ".hk-typing-av::after{content:\"\";position:absolute;inset:-3px;border-radius:50%;border:2px solid #0e8579;opacity:0;animation:hkAvPulse 1.8s infinite ease-out}",
     "@keyframes hkAvPulse{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.35);opacity:0}}",
@@ -42,8 +42,6 @@
     ".hk-dots i:nth-child(2){animation-delay:.16s;background:#12a390}",
     ".hk-dots i:nth-child(3){animation-delay:.32s;background:#5ec4b6}",
     "@keyframes hkDotWave{0%,60%,100%{transform:translateY(0) scale(.85);opacity:.45}30%{transform:translateY(-5px) scale(1.1);opacity:1}}",
-    ".hk-typing-label{font-size:.76rem;color:#8f8271;background:linear-gradient(90deg,#8f8271 30%,#0e8579 50%,#8f8271 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:hkShimmer 2s infinite linear}",
-    "@keyframes hkShimmer{from{background-position:200% 0}to{background-position:-200% 0}}",
     ".hk-chat-form{transition:box-shadow .2s,background .2s}",
     ".hk-chat-form:focus-within{box-shadow:inset 0 -2px 0 #0e8579;background:#fffdf8}",
     ".hk-chat-form input{transition:border-color .2s ease,box-shadow .2s ease}",
@@ -55,7 +53,7 @@
     ".hk-chat-form.busy button{opacity:.5;pointer-events:none}",
     ".hk-chat-fab{transition:transform .2s,box-shadow .2s}",
     ".hk-chat-fab:hover{transform:scale(1.06)}",
-    "@media (prefers-reduced-motion:reduce){.hk-msg,.hk-actions,.hk-typing,.hk-typing-av::after,.hk-dots i,.hk-typing-label{animation:none!important}.hk-typing-label{-webkit-text-fill-color:#8f8271}}",
+    "@media (prefers-reduced-motion:reduce){.hk-msg,.hk-actions,.hk-typing,.hk-typing-av::after,.hk-dots i{animation:none!important}}",
     ".hk-chat-credit{padding:5px 10px 7px;border-top:1px solid #f0e9dd;background:#fbf8f2;text-align:center;font-size:10.5px;color:#a09480}"
   ].join("\n");
   document.head.appendChild(css);
@@ -263,7 +261,7 @@
     sendBtn.disabled = true;
     busy = document.createElement("div");
     busy.className = "hk-typing";
-    busy.innerHTML = '<span class="hk-typing-av">\u2726</span><span class="hk-dots"><i></i><i></i><i></i></span><span class="hk-typing-label">حكاية بتكتب…</span>';
+    busy.innerHTML = '<span class="hk-typing-av">\u2726</span><span class="hk-dots"><i></i><i></i><i></i></span>';
     form.classList.add("busy");
     body.appendChild(busy);
     body.scrollTop = body.scrollHeight;
