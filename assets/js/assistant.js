@@ -30,27 +30,32 @@
     ".hk-chat-form input{flex:1;border:1px solid #ddd2c2;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px}",
     ".hk-chat-form button{background:#0e8579;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}",
     ".hk-chat-form button:disabled{opacity:.5;cursor:default}",
-    ".hk-msg{animation:hkMsgIn .3s cubic-bezier(.2,.9,.3,1)}",
-    "@keyframes hkMsgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}",
-    ".hk-typing{align-self:flex-start;background:#fff;border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;padding:9px 13px;display:inline-flex;align-items:center;gap:9px;box-shadow:0 2px 8px rgba(14,133,121,.08);animation:hkMsgIn .3s cubic-bezier(.2,.9,.3,1)}",
-    ".hk-typing-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0e8579,#12a390);color:#fff;font-size:13px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none;animation:hkAvatarPulse 1.6s infinite ease-in-out}",
-    "@keyframes hkAvatarPulse{0%,100%{box-shadow:0 0 0 0 rgba(14,133,121,.35)}55%{box-shadow:0 0 0 6px rgba(14,133,121,0)}}",
-    ".hk-typing-label{font-size:12px;color:#8f8271}",
-    ".hk-dots{display:inline-flex;gap:4px;direction:ltr;align-items:center}",
-    ".hk-dots i{width:7px;height:7px;border-radius:50%;background:#0e8579;animation:hkDot 1.15s infinite ease-in-out}",
-    ".hk-dots i:nth-child(2){animation-delay:.18s;background:#12a390}",
-    ".hk-dots i:nth-child(3){animation-delay:.36s;background:#5ec4b6}",
-    "@keyframes hkDot{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4.5px);opacity:1}}",
-    ".hk-chat-form{transition:box-shadow .25s ease}",
-    ".hk-chat-form.hk-waiting{box-shadow:inset 0 2px 0 0 #0e8579}",
+    ".hk-msg{animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
+    "@keyframes hkMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}",
+    ".hk-actions{animation:hkMsgIn .3s .05s cubic-bezier(.2,.8,.2,1) both}",
+    ".hk-typing{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;min-height:42px;background:linear-gradient(180deg,#fff,#fdfbf7);border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;box-shadow:0 2px 8px rgba(14,133,121,.07);animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
+    ".hk-typing-av{position:relative;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#12a390,#0e8579);color:#fff;display:grid;place-items:center;font-size:.8rem;flex:none}",
+    ".hk-typing-av::after{content:\"\";position:absolute;inset:-3px;border-radius:50%;border:2px solid #0e8579;opacity:0;animation:hkAvPulse 1.8s infinite ease-out}",
+    "@keyframes hkAvPulse{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.35);opacity:0}}",
+    ".hk-dots{display:inline-flex;gap:5px;align-items:center;direction:ltr}",
+    ".hk-dots i{width:7px;height:7px;border-radius:50%;background:#0e8579;display:inline-block;animation:hkDotWave 1.3s infinite cubic-bezier(.45,0,.55,1)}",
+    ".hk-dots i:nth-child(2){animation-delay:.16s;background:#12a390}",
+    ".hk-dots i:nth-child(3){animation-delay:.32s;background:#5ec4b6}",
+    "@keyframes hkDotWave{0%,60%,100%{transform:translateY(0) scale(.85);opacity:.45}30%{transform:translateY(-5px) scale(1.1);opacity:1}}",
+    ".hk-typing-label{font-size:.76rem;color:#8f8271;background:linear-gradient(90deg,#8f8271 30%,#0e8579 50%,#8f8271 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:hkShimmer 2s infinite linear}",
+    "@keyframes hkShimmer{from{background-position:200% 0}to{background-position:-200% 0}}",
+    ".hk-chat-form{transition:box-shadow .2s,background .2s}",
+    ".hk-chat-form:focus-within{box-shadow:inset 0 -2px 0 #0e8579;background:#fffdf8}",
     ".hk-chat-form input{transition:border-color .2s ease,box-shadow .2s ease}",
     ".hk-chat-form input:focus{outline:none;border-color:#0e8579;box-shadow:0 0 0 3px rgba(14,133,121,.14)}",
-    ".hk-chat-form button{transition:transform .15s ease,filter .2s ease,opacity .2s ease}",
-    ".hk-chat-form button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}",
-    ".hk-chat-form button:active:not(:disabled){transform:scale(.96)}",
-    ".hk-chat-form button:disabled{animation:hkBtnPulse 1.3s infinite ease-in-out}",
-    "@keyframes hkBtnPulse{0%,100%{opacity:.45}50%{opacity:.75}}",
-    "@media (prefers-reduced-motion: reduce){.hk-msg,.hk-typing,.hk-typing-avatar,.hk-dots i,.hk-chat-form button:disabled{animation:none !important}}",
+    ".hk-chat-form button{transition:transform .15s,filter .2s,opacity .2s;opacity:.55}",
+    ".hk-chat-form.ready button{opacity:1}",
+    ".hk-chat-form.ready button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}",
+    ".hk-chat-form button:active:not(:disabled){transform:scale(.92)}",
+    ".hk-chat-form.busy button{opacity:.5;pointer-events:none}",
+    ".hk-chat-fab{transition:transform .2s,box-shadow .2s}",
+    ".hk-chat-fab:hover{transform:scale(1.06)}",
+    "@media (prefers-reduced-motion:reduce){.hk-msg,.hk-actions,.hk-typing,.hk-typing-av::after,.hk-dots i,.hk-typing-label{animation:none!important}.hk-typing-label{-webkit-text-fill-color:#8f8271}}",
     ".hk-chat-credit{padding:5px 10px 7px;border-top:1px solid #f0e9dd;background:#fbf8f2;text-align:center;font-size:10.5px;color:#a09480}"
   ].join("\n");
   document.head.appendChild(css);
@@ -78,6 +83,7 @@
   var form = panel.querySelector(".hk-chat-form");
   var input = form.querySelector("input");
   var sendBtn = form.querySelector("button");
+  input.addEventListener("input", function () { form.classList.toggle("ready", !!input.value.trim()); });
   var greeted = false;
 
   var hkHist = [];
@@ -247,6 +253,7 @@
     if (!q || busy) return;
     add("me", q);
     input.value = "";
+    form.classList.remove("ready");
 
     // إجابة فورية بأزرار من البيانات المنشورة (تواصل/حكاية) من غير انتظار الخادم
     var local = null;
@@ -256,20 +263,20 @@
     sendBtn.disabled = true;
     busy = document.createElement("div");
     busy.className = "hk-typing";
-    busy.innerHTML = '<span class="hk-typing-avatar">ح</span><span class="hk-dots"><i></i><i></i><i></i></span><span class="hk-typing-label">حكاية بتكتب…</span>';
-    form.classList.add("hk-waiting");
+    busy.innerHTML = '<span class="hk-typing-av">\u2726</span><span class="hk-dots"><i></i><i></i><i></i></span><span class="hk-typing-label">حكاية بتكتب…</span>';
+    form.classList.add("busy");
     body.appendChild(busy);
     body.scrollTop = body.scrollHeight;
     fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "assistant", q: q, history: hkHist.slice(0, -1).slice(-8) }) })
       .then(function (r) { return r.json(); })
       .then(function (r) {
-        busy.remove(); busy = null; sendBtn.disabled = false; form.classList.remove("hk-waiting");
+        busy.remove(); busy = null; sendBtn.disabled = false; form.classList.remove("busy");
         if (r && r.ok && r.answer) add("bot", r.answer);
         else add("err", (r && r.error) || "حصلت مشكلة، جرّب تاني");
       })
       .catch(function () {
         if (busy) { busy.remove(); busy = null; }
-        sendBtn.disabled = false; form.classList.remove("hk-waiting");
+        sendBtn.disabled = false; form.classList.remove("busy");
         add("err", "مشكلة في الاتصال، جرّب تاني");
       });
   });
