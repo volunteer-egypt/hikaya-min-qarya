@@ -1,4 +1,4 @@
-/* مساعد حكاية — دردشة ذكية مجانية (Gemini عبر خادم الموقع) */
+/* مساعد حكاية — دردشة ذكية مجانية (Gemini عبر خادم الموقع) + أزرار تفاعلية من بيانات الموقع المنشورة */
 (function () {
   "use strict";
   var API = (window.SITE_DATA && SITE_DATA.meta && SITE_DATA.meta.apiUrl) || "";
@@ -19,6 +19,13 @@
     ".hk-msg.bot{background:#fff;border:1px solid #e5ded2;align-self:flex-start;border-start-start-radius:4px}",
     ".hk-msg.me{background:#0e8579;color:#fff;align-self:flex-end;border-start-end-radius:4px}",
     ".hk-msg.err{background:#fdf0ee;border:1px solid #f0c9c2;color:#a33}",
+    ".hk-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}",
+    ".hk-action{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;font-size:12.5px;font-weight:800;text-decoration:none;color:#fff;line-height:1.6}",
+    ".hk-action:hover{filter:brightness(.92)}",
+    ".hk-action.wa{background:#1faa59}",
+    ".hk-action.fb{background:#1877F2}",
+    ".hk-action.site{background:#0e8579}",
+    ".hk-action.story{background:#5b4636}",
     ".hk-chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid #eee5d8;background:#fff}",
     ".hk-chat-form input{flex:1;border:1px solid #ddd2c2;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px}",
     ".hk-chat-form button{background:#0e8579;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}",
@@ -53,10 +60,30 @@
   var sendBtn = form.querySelector("button");
   var greeted = false;
 
-  function add(cls, text) {
+  function add(cls, text, actions) {
     var d = document.createElement("div");
     d.className = "hk-msg " + cls;
-    d.textContent = text;
+    var t = document.createElement("span");
+    t.textContent = text;
+    d.appendChild(t);
+    if (actions && actions.length) {
+      var box = document.createElement("div");
+      box.className = "hk-actions";
+      actions.forEach(function (a) {
+        var link = document.createElement("a");
+        link.className = "hk-action " + a.kind;
+        link.href = a.url;
+        link.textContent = a.label;
+        if (a.kind === "story") {
+          link.addEventListener("click", function () { panel.classList.remove("open"); });
+        } else {
+          link.target = "_blank";
+          link.rel = "noopener";
+        }
+        box.appendChild(link);
+      });
+      d.appendChild(box);
+    }
     body.appendChild(d);
     body.scrollTop = body.scrollHeight;
     return d;
@@ -72,6 +99,104 @@
   });
   panel.querySelector(".hk-chat-close").addEventListener("click", function () { panel.classList.remove("open"); });
 
+  /* ---------- بيانات الموقع المنشورة (أحدث نسخة وصلت للصفحة) ---------- */
+  function siteContent() {
+    try {
+      var raw = localStorage.getItem("hikaya_admin_override_v1");
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && d.stories) return d;
+      }
+    } catch (e) {}
+    return window.SITE_DATA || {};
+  }
+  function norm(s) {
+    return String(s || "")
+      .replace(/[ً-ْٰ]/g, "")
+      .replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي")
+      .replace(/ؤ/g, "و").replace(/ئ/g, "ي")
+      .toLowerCase()
+      .replace(/[^ء-غف-ي٠-٩a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ").trim();
+  }
+  function sigWords(name) {
+    return norm(name).split(" ").map(function (w) { return w.replace(/^ال/, ""); })
+      .filter(function (w) { return w.length >= 3; });
+  }
+  function nameHits(qn, name) {
+    var qw = {};
+    norm(qn).split(" ").forEach(function (w) { qw[w.replace(/^ال/, "")] = 1; });
+    var hits = 0;
+    sigWords(name).forEach(function (w) { if (qw[w]) hits++; });
+    return hits;
+  }
+  function waUrl(phone) {
+    var d = String(phone || "").replace(/\D/g, "");
+    if (/^01\d{9}$/.test(d)) d = "2" + d;
+    else if (/^20\d{10}$/.test(d)) { /* جاهز */ }
+    else return "";
+    return "https://wa.me/" + d;
+  }
+
+  // يبني ردًّا محليًّا بأزرار لو السؤال عن وسيلة تواصل أو حكاية؛ وإلا يرجع null فيكمل الطلب للخادم
+  function localAnswer(q) {
+    var d = siteContent();
+    var qn = norm(q);
+    if (!qn) return null;
+
+    // ١) تواصل مع شخص من الفريق أو شريك/مؤسسة
+    var people = [];
+    (d.team || []).forEach(function (t) {
+      if (t.placeholder || !t.name) return;
+      people.push({ name: t.name, role: t.role || "", phone: t.phone, facebook: t.facebook, postUrl: "", partner: false });
+    });
+    (d.partners || []).forEach(function (p) {
+      var nm = String(p.name || "").trim();
+      var postUrl = String(p.postUrl || "");
+      if (postUrl.indexOf("actt-official.pages.dev") !== -1 && !nm) nm = "المركز العربي للتكنولوجيا والتدريب";
+      if (!nm) return;
+      people.push({ name: nm, role: p.badge || "شريك في المبادرة", phone: "", facebook: p.facebook, postUrl: postUrl, partner: true });
+    });
+    var found = null;
+    for (var i = 0; i < people.length; i++) {
+      if (nameHits(qn, people[i].name) >= 2) { found = people[i]; break; }
+    }
+    if (found) {
+      var acts = [];
+      var wa = waUrl(found.phone);
+      if (wa) acts.push({ label: "💬 واتساب", url: wa, kind: "wa" });
+      if (found.facebook) acts.push({ label: "📘 فيسبوك", url: found.facebook, kind: "fb" });
+      if (found.postUrl) acts.push({ label: "🔗 الموقع الرسمي", url: found.postUrl, kind: "site" });
+      var intro = found.partner
+        ? "«" + found.name + "» — " + found.role + "."
+        : "«" + found.name + "» — " + found.role + ".";
+      if (acts.length) {
+        return { text: intro + " تقدر تتواصل معاه مباشرة من الأزرار دي 👇", actions: acts };
+      }
+      return { text: intro + " للأسف مفيش وسيلة تواصل منشورة عنه على الموقع لسه، ولو عندك استفسار للمبادرة عمومًا قولّي وأنا أساعدك.", actions: [] };
+    }
+
+    // ٢) حكاية بعينها
+    var stories = (d.stories || []).filter(function (st) {
+      if (norm(st.title) && qn.indexOf(norm(st.title)) !== -1) return true;
+      return sigWords(st.title).some(function (w) {
+        return w.length >= 4 && qn.split(" ").map(function (x) { return x.replace(/^ال/, ""); }).indexOf(w) !== -1;
+      });
+    }).slice(0, 3);
+    if (stories.length) {
+      var sActs = stories.map(function (st) {
+        return { label: "📖 " + st.title, url: "story.html?id=" + st.id, kind: "story" };
+      });
+      if (stories.length === 1) {
+        var st0 = stories[0];
+        return { text: "موجودة ✅ «" + st0.title + "» — " + (st0.desc || "") + " دوس الزرار وادخل عليها على طول 👇", actions: sActs };
+      }
+      return { text: "لقيتلك الحكايات دي، دوس على اللي عايزها 👇", actions: sActs };
+    }
+
+    return null;
+  }
+
   var busy = null;
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
@@ -79,6 +204,12 @@
     if (!q || busy) return;
     add("me", q);
     input.value = "";
+
+    // إجابة فورية بأزرار من البيانات المنشورة (تواصل/حكاية) من غير انتظار الخادم
+    var local = null;
+    try { local = localAnswer(q); } catch (e0) {}
+    if (local) { add("bot", local.text, local.actions); return; }
+
     sendBtn.disabled = true;
     busy = document.createElement("div");
     busy.className = "hk-typing";
