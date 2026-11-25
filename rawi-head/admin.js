@@ -52,6 +52,47 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { t.classList.remove("show"); }, 3200);
   }
+  /* ---------- أدوات مشتركة ---------- */
+  // أرقام مصرية فقط: 010xxxxxxxx أو +20/0020/20 10xxxxxxxx — تُطبع بصيغة دولية بلا + لروابط واتساب
+  function normalizeEgPhone(raw) {
+    var d = String(raw || "").replace(/[^0-9]/g, "");
+    if (d.indexOf("0020") === 0) d = d.slice(2);
+    if (d.indexOf("20") === 0 && d.length === 12) d = d.slice(2);
+    if (d.indexOf("0") === 0 && d.length === 11) d = d.slice(1);
+    if (!/^1[0125][0-9]{8}$/.test(d)) return null;
+    return "20" + d;
+  }
+  function isValidEmail(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s); }
+  function buildWelcome(name, link) {
+    return "أهلًا بك يا «" + name + "» في أسرة مبادرة «حكاية من قرية · صوت الماضي» 🌾\n" +
+      "سعداء بانضمامك إلى فريق يحفظ حكايات أهلنا ويوصل أصواتهم للأجيال.\n" +
+      "تم إنشاء حسابك في لوحة إدارة الموقع. لتفعيل حسابك واختيار كلمة مرورك بنفسك، افتح هذا الرابط خلال ٢٤ ساعة. الرابط خاص بك ويُستخدم مرة واحدة، فلا تشاركه مع أحد:\n" +
+      link + "\nبانتظار إسهامك الطيب 🌿";
+  }
+  // نافذة تأكيد قبل أي حفظ: تعرض البيانات المدخلة كاملة ثم تحفظ بعد موافقته
+  function confirmSave(title, rows, onOk) {
+    var ov = el("div", "cf-overlay");
+    var card = el("div", "cf-card");
+    card.innerHTML = '<h3 class="sec-title">' + esc(title) + "</h3>";
+    var tb = el("table", "cf-table");
+    rows.forEach(function (r) {
+      var tr = el("tr");
+      var th = el("th"); th.textContent = r[0];
+      var td = el("td"); td.textContent = r[1]; if (r[2]) td.dir = "ltr";
+      tr.appendChild(th); tr.appendChild(td); tb.appendChild(tr);
+    });
+    card.appendChild(tb);
+    var acts = el("div", "actions");
+    var ok = el("button", null, "تأكيد الحفظ");
+    var no = el("button", "ghost", "إلغاء");
+    ok.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); onOk(); };
+    no.onclick = function () { if (ov.parentNode) document.body.removeChild(ov); };
+    acts.appendChild(ok); acts.appendChild(no);
+    card.appendChild(acts);
+    ov.appendChild(card);
+    ov.addEventListener("click", function (e) { if (e.target === ov && ov.parentNode) document.body.removeChild(ov); });
+    document.body.appendChild(ov);
+  }
   // مسار عرض ملفات الموقع النسبية من داخل /rawi-head/
   function mediaUrl(u) {
     u = String(u || "");
@@ -249,9 +290,11 @@
       var m = $("#sm", box); m.style.display = "block"; m.className = "msg " + (ok ? "ok" : "err"); m.textContent = t;
     }
     function persist(note) {
-      saveSection(sec, spec.saveKeys || [spec.key], function (res) {
-        if (res.ok) { showToast(true, "تم الحفظ ✓"); if (afterSave) afterSave(); }
-        else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
+      confirmSave("مراجعة قبل الحفظ", [["القسم", SECTIONS[sec].label], ["عدد العناصر", String((content[spec.key] || []).length)]], function () {
+        saveSection(sec, spec.saveKeys || [spec.key], function (res) {
+          if (res.ok) { showToast(true, "تم الحفظ ✓"); if (afterSave) afterSave(); }
+          else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
+        });
       });
     }
     function draw() {
@@ -450,6 +493,7 @@
         { k: "postUrl", label: "الموقع الرسمي (إن وُجد)", type: "url" },
         { k: "facebook", label: "صفحة فيسبوك (اختياري)", type: "url" },
         { k: "note", label: "ملاحظة" },
+        { k: "badge", label: "نوع الشراكة (اختياري — شارة صغيرة على البطاقة، مثل: الشريك التقني أو شريك داعم)" },
         { k: "showHeader", label: " يظهر في الترويسة العلوية ", type: "checkbox" },
         { k: "showFooter", label: " يظهر في التذييل ", type: "checkbox" },
         { k: "showPage", label: " يظهر في صفحة الشركاء ", type: "checkbox" }
@@ -552,9 +596,18 @@
     box.appendChild(grid);
     var b = el("button", "save-bar", "حفظ");
     b.onclick = function () {
-      saveSection("meta", ["meta", "sectionVisibility", "logos", "heroImage"], function (res) {
-        if (res.ok) showToast(true, "تم الحفظ ✓");
-        else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
+      var svNow = content.sectionVisibility || {};
+      var visible = Object.keys(svNow).filter(function (k) { return svNow[k] !== false; }).length;
+      confirmSave("مراجعة قبل الحفظ", [
+        ["القسم", "نصوص الموقع"],
+        ["اسم الموقع", (content.meta && content.meta.name) || "—"],
+        ["السطر التعريفي", (content.meta && content.meta.tagline) || "—"],
+        ["عدد الأقسام الظاهرة", String(visible)]
+      ], function () {
+        saveSection("meta", ["meta", "sectionVisibility", "logos", "heroImage"], function (res) {
+          if (res.ok) showToast(true, "تم الحفظ ✓");
+          else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
+        });
       });
     };
     box.appendChild(b);
@@ -577,8 +630,10 @@
     var un = el("input"); un.type = "text"; un.dir = "ltr"; cr.appendChild(un);
     cr.appendChild(el("label", null, "الاسم الظاهر"));
     var nm = el("input"); nm.type = "text"; cr.appendChild(nm);
-    cr.appendChild(el("label", null, "رقم الهاتف (واتساب، بالكود الدولي مثل 2010...)"));
+    cr.appendChild(el("label", null, "رقم الهاتف (واتساب — مصري فقط: 010xxxxxxxx أو ‎+2010xxxxxxxx)"));
     var ph = el("input"); ph.type = "tel"; ph.dir = "ltr"; cr.appendChild(ph);
+    cr.appendChild(el("label", null, "البريد الإلكتروني (اختياري — أي مزود، لتسجيله وإرسال الدعوة بريديًا)"));
+    var em = el("input"); em.type = "email"; em.dir = "ltr"; cr.appendChild(em);
     cr.appendChild(el("label", null, "الأقسام المسموحة"));
     var pg = el("div", "perm-grid");
     Object.keys(SECTIONS).forEach(function (s) {
@@ -593,23 +648,40 @@
     mk.onclick = function () {
       var perms = [...pg.querySelectorAll("input:checked")].map(function (c) { return c.value; });
       if (!un.value || !perms.length) { msg(false, "أدخل اسم المستخدم واختر قسمًا واحدًا على الأقل"); return; }
-      if (/\s/.test(un.value)) { msg(false, "اسم المستخدم لا يمكن أن يحتوي على مسافات"); return; }
-      mk.disabled = true;
-      api({ action: "inviteCreate", token: session.token, username: un.value, name: nm.value.trim(), phone: ph.value.trim(), perms: perms })
-        .then(function (res) {
-          mk.disabled = false;
-          if (!res.ok) { msg(false, esc(res.error || "فشل")); return; }
-          var link = location.origin + ACT_BASE + "#/activate/" + res.invite;
-          var phone = (res.phone || "").replace(/[^0-9]/g, "");
-          var welcome = "أهلاً " + (res.name || res.username) + "، تم إنشاء حسابك في لوحة إدارة موقع «حكاية من قرية». لتفعيل حسابك واختيار كلمة مرورك افتح هذا الرابط خلال ٢٤ ساعة (يُستخدم مرة واحدة): " + link;
-          var wa = phone ? "https://wa.me/" + phone + "?text=" + encodeURIComponent(welcome) : "";
-          msg(true,
-            "تم إنشاء الدعوة ✓<br>رابط التفعيل (يظهر مرة واحدة):<br><code style=\"font-size:11px;direction:ltr;display:block;word-break:break-all\">" + esc(link) + "</code>" +
-            '<div class="actions"><button class="small" id="cp">نسخ الرابط</button>' +
-            (wa ? ' <a class="wa" id="wal" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") + "</div>");
-          $("#cp", box).onclick = function () { navigator.clipboard.writeText(link); $("#cp", box).textContent = "تم النسخ ✓"; };
-          drawList();
-        });
+      if (/\s/.test(un.value)) { msg(false, "اسم المستخدم لا يمكن أن يحتوي على مسافات — اكتبه حروفًا لاتينية بلا فراغات"); return; }
+      var phoneNorm = "";
+      if (ph.value.trim()) {
+        phoneNorm = normalizeEgPhone(ph.value);
+        if (!phoneNorm) { msg(false, "رقم غير مقبول — يُقبل رقم مصري فقط مثل 010xxxxxxxx أو ‎+2010xxxxxxxx"); return; }
+      }
+      var mail = em.value.trim().toLowerCase();
+      if (mail && !isValidEmail(mail)) { msg(false, "صيغة البريد الإلكتروني غير صحيحة — راجع العنوان وحاول مجددًا"); return; }
+      confirmSave("مراجعة بيانات الدعوة قبل الحفظ", [
+        ["اسم المستخدم", un.value, 1],
+        ["الاسم الظاهر", nm.value.trim() || "—"],
+        ["الهاتف", phoneNorm ? "+" + phoneNorm : "—", 1],
+        ["البريد الإلكتروني", mail || "—", 1],
+        ["الأقسام المسموحة", perms.map(function (x) { return (SECTIONS[x] || {}).label || x; }).join("، ")]
+      ], function () {
+        mk.disabled = true;
+        api({ action: "inviteCreate", token: session.token, username: un.value, name: nm.value.trim(), phone: phoneNorm, email: mail, perms: perms })
+          .then(function (res) {
+            mk.disabled = false;
+            if (!res.ok) { msg(false, esc(res.error || "فشل")); return; }
+            var link = location.origin + ACT_BASE + "#/activate/" + res.invite;
+            var welcome = buildWelcome(res.name || res.username, link);
+            var wa = res.phone ? "https://wa.me/" + String(res.phone).replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(welcome) : "";
+            var mailTo = res.email ? "mailto:" + res.email + "?subject=" + encodeURIComponent("دعوة للانضمام إلى لوحة إدارة «حكاية من قرية»") + "&body=" + encodeURIComponent(welcome) : "";
+            msg(true,
+              "تم إنشاء الدعوة ✓<br>رابط التفعيل (يظهر مرة واحدة):<br><code style=\"font-size:11px;direction:ltr;display:block;word-break:break-all\">" + esc(link) + "</code>" +
+              '<div class="actions"><button class="small" id="cp">نسخ الرابط</button>' +
+              (wa ? ' <a class="wa" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") +
+              (mailTo ? ' <a class="wa mail" href="' + esc(mailTo) + '">فتح البريد مع الرسالة</a>' : "") + "</div>" +
+              '<p class="hint">الإرسال يدوي منك وحدك: اختر واتساب أو البريد فتُفتح الرسالة جاهزة وترسلها بنفسك — لا يُرسل الموقع شيئًا تلقائيًا.</p>');
+            $("#cp", box).onclick = function () { navigator.clipboard.writeText(link); $("#cp", box).textContent = "تم النسخ ✓"; };
+            drawList();
+          });
+      });
     };
     cr.appendChild(mk);
     box.appendChild(cr);
@@ -621,11 +693,11 @@
       api({ action: "userList", token: session.token }).then(function (res) {
         if (!res.ok) { listBox.innerHTML = '<div class="msg err">' + esc(res.error || "") + "</div>"; return; }
         var t = el("table");
-        t.innerHTML = "<tr><th>المستخدم</th><th>الاسم</th><th>الهاتف</th><th>الأقسام</th><th>الحالة</th><th></th></tr>";
+        t.innerHTML = "<tr><th>المستخدم</th><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>الأقسام</th><th>الحالة</th><th></th></tr>";
         res.users.forEach(function (u) {
           var tr = el("tr");
           tr.innerHTML =
-            "<td dir=ltr>" + esc(u.username) + "</td><td>" + esc(u.name) + "</td><td dir=ltr>" + esc(u.phone || "—") + "</td>" +
+            "<td dir=ltr>" + esc(u.username) + "</td><td>" + esc(u.name) + "</td><td dir=ltr>" + esc(u.phone || "—") + "</td><td dir=ltr>" + esc(u.email || "—") + "</td>" +
             "<td>" + (u.perms || []).map(function (p) { return '<span class="pill">' + esc((SECTIONS[p] || {}).label || p) + "</span>"; }).join(" ") + "</td>" +
             '<td><span class="pill ' + (u.active ? "on" : "off") + '">' + (u.active ? "نشط" : (u.hasPassword ? "موقوف" : "بانتظار التفعيل")) + "</span></td>";
           var td = el("td");
@@ -638,10 +710,16 @@
           var re = el("button", "small ghost", "دعوة جديدة");
           re.title = "إبطال الرابط السابق وإنشاء رابط تفعيل جديد";
           re.onclick = function () {
-            api({ action: "inviteCreate", token: session.token, username: u.username, name: u.name, phone: u.phone, perms: u.perms }).then(function (r) {
+            api({ action: "inviteCreate", token: session.token, username: u.username, name: u.name, phone: u.phone, email: u.email || "", perms: u.perms }).then(function (r) {
               if (r.ok) {
                 var link = location.origin + ACT_BASE + "#/activate/" + r.invite;
-                msg(true, 'دعوة جديدة لـ ' + esc(u.username) + ':<br><code style="font-size:11px;direction:ltr;display:block;word-break:break-all">' + esc(link) + "</code>");
+                var welcome = buildWelcome(r.name || r.username, link);
+                var wa = r.phone ? "https://wa.me/" + String(r.phone).replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(welcome) : "";
+                var mailTo = r.email ? "mailto:" + r.email + "?subject=" + encodeURIComponent("دعوة للانضمام إلى لوحة إدارة «حكاية من قرية»") + "&body=" + encodeURIComponent(welcome) : "";
+                msg(true, 'دعوة جديدة لـ ' + esc(u.username) + ':<br><code style="font-size:11px;direction:ltr;display:block;word-break:break-all">' + esc(link) + "</code>" +
+                  '<div class="actions">' +
+                  (wa ? '<a class="wa" href="' + esc(wa) + '" target="_blank" rel="noopener">فتح واتساب مع الرسالة</a>' : "") +
+                  (mailTo ? ' <a class="wa mail" href="' + esc(mailTo) + '">فتح البريد مع الرسالة</a>' : "") + "</div>");
               } else msg(false, esc(r.error || "فشل"));
             });
           };

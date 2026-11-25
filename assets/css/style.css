@@ -154,8 +154,8 @@ audio{width:100%;height:42px;display:block}
 .partner-logo-frame img{max-height:115px;max-width:170px;object-fit:contain}
 .partner-card strong{color:var(--green);font-size:16.5px;line-height:1.6;display:block}
 .partner-card .partner-cta{display:inline-block;margin-top:10px;color:var(--rust);font-size:13px;font-weight:800}
-.tech-partner-badge{display:inline-block;margin-top:8px;background:#1a56b0;color:#fff;font-weight:900;font-size:13.5px;line-height:1.5;padding:3px 16px;border-radius:999px;letter-spacing:.2px;box-shadow:0 3px 0 #12408a}
-.partner-modal-card .tech-partner-badge{font-size:15px;padding:4px 20px;margin:2px auto 10px}
+.partner-badge{display:inline-block;margin-top:8px;background:#0e8579;color:#fff;font-weight:900;font-size:13.5px;line-height:1.5;padding:3px 16px;border-radius:999px;letter-spacing:.2px;box-shadow:0 3px 0 #0a635b}
+.partner-modal-card .partner-badge{font-size:15px;padding:4px 20px;margin:2px auto 10px}
 .partners-note{text-align:center;color:var(--muted);margin-top:24px;font-weight:700}
 .partner-modal{position:fixed;inset:0;background:rgba(30,40,30,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
 .partner-modal.open{display:flex}
