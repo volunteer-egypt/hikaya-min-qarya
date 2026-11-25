@@ -176,16 +176,35 @@
     var allowed = Object.keys(SECTIONS).filter(function (s) { return can(s); });
     if (!allowed.length) { body.innerHTML = '<div class="msg err">لا تملك صلاحية أي قسم بعد. تواصل مع مدير المبادرة.</div>'; return; }
 
-    var current = allowed[0];
+    var current = "home";
+    var HOME_ICONS = { stories: "📖", gallery: "🖼️", activities: "📅", press: "📰", partners: "🤝", team: "👥", elders: "🎙️", meta: "✏️", users: "🔑" };
     function drawTabs() {
       tabs.innerHTML = "";
+      var hb = el("button", current === "home" ? "on" : "", "الرئيسية");
+      hb.onclick = function () { current = "home"; drawTabs(); drawBody(); };
+      tabs.appendChild(hb);
       allowed.forEach(function (s) {
         var b = el("button", s === current ? "on" : "", esc(SECTIONS[s].label));
         b.onclick = function () { current = s; drawTabs(); drawBody(); };
         tabs.appendChild(b);
       });
     }
+    function renderHome(root) {
+      var box = el("div", "card");
+      box.innerHTML = '<h3 class="sec-title">أهلاً ' + esc(session.name || session.username) + '</h3><p class="hint">اختر القسم الذي تريد إدارته — تبويبات الأقسام تبقى ظاهرة بالأعلى دائمًا.</p>';
+      var grid = el("div", "home-grid");
+      allowed.forEach(function (s) {
+        var t = el("button", "home-tile", '<span class="home-ic">' + (HOME_ICONS[s] || "▦") + "</span><span>" + esc(SECTIONS[s].label) + "</span>");
+        t.type = "button";
+        t.onclick = function () { current = s; drawTabs(); drawBody(); };
+        grid.appendChild(t);
+      });
+      box.appendChild(grid);
+      root.innerHTML = "";
+      root.appendChild(box);
+    }
     function drawBody() {
+      if (current === "home") return renderHome(body);
       body.innerHTML = '<div class="loading">جارٍ التحميل…</div>';
       if (current === "users") return renderUsers(body);
       loadContent().then(function () {
