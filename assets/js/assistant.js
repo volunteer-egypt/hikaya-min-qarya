@@ -30,13 +30,27 @@
     ".hk-chat-form input{flex:1;border:1px solid #ddd2c2;border-radius:10px;padding:10px;font-family:inherit;font-size:13.5px}",
     ".hk-chat-form button{background:#0e8579;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;cursor:pointer}",
     ".hk-chat-form button:disabled{opacity:.5;cursor:default}",
-    ".hk-typing{align-self:flex-start;background:#fff;border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;padding:10px 14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}",
-    ".hk-typing-label{font-size:12px;color:#a09480}",
-    ".hk-dots{display:inline-flex;gap:4px;direction:ltr}",
-    ".hk-dots i{width:7px;height:7px;border-radius:50%;background:#c0b3a0;animation:hkDot 1.1s infinite ease-in-out}",
-    ".hk-dots i:nth-child(2){animation-delay:.18s}",
-    ".hk-dots i:nth-child(3){animation-delay:.36s}",
-    "@keyframes hkDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}",
+    ".hk-msg{animation:hkMsgIn .3s cubic-bezier(.2,.9,.3,1)}",
+    "@keyframes hkMsgIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}",
+    ".hk-typing{align-self:flex-start;background:#fff;border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;padding:9px 13px;display:inline-flex;align-items:center;gap:9px;box-shadow:0 2px 8px rgba(14,133,121,.08);animation:hkMsgIn .3s cubic-bezier(.2,.9,.3,1)}",
+    ".hk-typing-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0e8579,#12a390);color:#fff;font-size:13px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none;animation:hkAvatarPulse 1.6s infinite ease-in-out}",
+    "@keyframes hkAvatarPulse{0%,100%{box-shadow:0 0 0 0 rgba(14,133,121,.35)}55%{box-shadow:0 0 0 6px rgba(14,133,121,0)}}",
+    ".hk-typing-label{font-size:12px;color:#8f8271}",
+    ".hk-dots{display:inline-flex;gap:4px;direction:ltr;align-items:center}",
+    ".hk-dots i{width:7px;height:7px;border-radius:50%;background:#0e8579;animation:hkDot 1.15s infinite ease-in-out}",
+    ".hk-dots i:nth-child(2){animation-delay:.18s;background:#12a390}",
+    ".hk-dots i:nth-child(3){animation-delay:.36s;background:#5ec4b6}",
+    "@keyframes hkDot{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4.5px);opacity:1}}",
+    ".hk-chat-form{transition:box-shadow .25s ease}",
+    ".hk-chat-form.hk-waiting{box-shadow:inset 0 2px 0 0 #0e8579}",
+    ".hk-chat-form input{transition:border-color .2s ease,box-shadow .2s ease}",
+    ".hk-chat-form input:focus{outline:none;border-color:#0e8579;box-shadow:0 0 0 3px rgba(14,133,121,.14)}",
+    ".hk-chat-form button{transition:transform .15s ease,filter .2s ease,opacity .2s ease}",
+    ".hk-chat-form button:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}",
+    ".hk-chat-form button:active:not(:disabled){transform:scale(.96)}",
+    ".hk-chat-form button:disabled{animation:hkBtnPulse 1.3s infinite ease-in-out}",
+    "@keyframes hkBtnPulse{0%,100%{opacity:.45}50%{opacity:.75}}",
+    "@media (prefers-reduced-motion: reduce){.hk-msg,.hk-typing,.hk-typing-avatar,.hk-dots i,.hk-chat-form button:disabled{animation:none !important}}",
     ".hk-chat-credit{padding:5px 10px 7px;border-top:1px solid #f0e9dd;background:#fbf8f2;text-align:center;font-size:10.5px;color:#a09480}"
   ].join("\n");
   document.head.appendChild(css);
@@ -242,19 +256,20 @@
     sendBtn.disabled = true;
     busy = document.createElement("div");
     busy.className = "hk-typing";
-    busy.innerHTML = '<span class="hk-typing-label">حكاية بتكتب</span><span class="hk-dots"><i></i><i></i><i></i></span>';
+    busy.innerHTML = '<span class="hk-typing-avatar">ح</span><span class="hk-dots"><i></i><i></i><i></i></span><span class="hk-typing-label">حكاية بتكتب…</span>';
+    form.classList.add("hk-waiting");
     body.appendChild(busy);
     body.scrollTop = body.scrollHeight;
     fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "assistant", q: q, history: hkHist.slice(0, -1).slice(-8) }) })
       .then(function (r) { return r.json(); })
       .then(function (r) {
-        busy.remove(); busy = null; sendBtn.disabled = false;
+        busy.remove(); busy = null; sendBtn.disabled = false; form.classList.remove("hk-waiting");
         if (r && r.ok && r.answer) add("bot", r.answer);
         else add("err", (r && r.error) || "حصلت مشكلة، جرّب تاني");
       })
       .catch(function () {
         if (busy) { busy.remove(); busy = null; }
-        sendBtn.disabled = false;
+        sendBtn.disabled = false; form.classList.remove("hk-waiting");
         add("err", "مشكلة في الاتصال، جرّب تاني");
       });
   });
