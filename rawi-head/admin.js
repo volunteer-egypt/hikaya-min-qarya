@@ -713,15 +713,15 @@
             w.title = "ينشئ رابط تفعيل جديدًا ويفتح واتساب برسالة الترحيب والرابط (يُبطل أي رابط سابق)";
             w.onclick = function () {
               w.disabled = true;
-              var win = window.open("about:blank", "_blank");
+              w.textContent = "…";
               api({ action: "inviteCreate", token: session.token, username: u.username, name: u.name, phone: u.phone, email: u.email || "", perms: u.perms }).then(function (r) {
                 w.disabled = false;
+                w.textContent = "واتساب";
                 if (r.ok) {
-                  var d = inviteDone(r, box, msg);
-                  if (win && d.wa) win.location.href = d.wa;
+                  inviteDone(r, box, msg);
                   drawList();
-                } else { if (win) win.close(); msg(false, esc(r.error || "فشل")); }
-              }).catch(function () { w.disabled = false; if (win) win.close(); msg(false, "مشكلة في الاتصال"); });
+                } else msg(false, esc(r.error || "فشل"));
+              }).catch(function () { w.disabled = false; w.textContent = "واتساب"; msg(false, "مشكلة في الاتصال"); });
             };
             td.appendChild(w);
           }
