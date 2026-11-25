@@ -177,10 +177,11 @@
     }
 
     // ٢) حكاية بعينها
+    var genericStoryWords = { "حكايه": 1, "قصه": 1 };
     var stories = (d.stories || []).filter(function (st) {
       if (norm(st.title) && qn.indexOf(norm(st.title)) !== -1) return true;
       return sigWords(st.title).some(function (w) {
-        return w.length >= 4 && qn.split(" ").map(function (x) { return x.replace(/^ال/, ""); }).indexOf(w) !== -1;
+        return w.length >= 4 && !genericStoryWords[w] && qn.split(" ").map(function (x) { return x.replace(/^ال/, ""); }).indexOf(w) !== -1;
       });
     }).slice(0, 3);
     if (stories.length) {
