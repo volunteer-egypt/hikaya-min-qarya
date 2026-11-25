@@ -228,7 +228,7 @@ ${(() => {
         </div>
       </div>
       <div class="hero-visual">
-        <img src="${esc(d.heroImage.src)}" alt="${esc(d.heroImage.alt)}">
+        <img src="${esc(hkImg(d.heroImage.src))}" alt="${esc(d.heroImage.alt)}">
         <div class="floating-note">حكاياتنا هويتنا<br>ومستقبلنا</div>
       </div>`;
 
@@ -239,7 +239,7 @@ ${(() => {
     const cards = d.stories.map((s, i) => `
       <article class="story" data-title="${esc(s.title)}">
         <a class="story-link" href="story.html?id=${s.id}">
-          <div class="cover"><img src="${esc(s.cover)}" alt="غلاف ${esc(s.title)}" loading="lazy"><span class="badge">${AR_NUM[i] || i + 1}</span></div>
+          <div class="cover"><img src="${esc(hkImg(s.cover))}" alt="غلاف ${esc(s.title)}" loading="lazy"><span class="badge">${AR_NUM[i] || i + 1}</span></div>
           <div class="body"><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p><span class="read">صفحة الحكاية ←</span></div>
         </a>
         <div class="listen"><label>اسمع الحكاية</label><audio controls preload="none" src="${esc(s.audio)}" aria-label="صوت ${esc(s.title)}"></audio></div>
@@ -262,9 +262,9 @@ ${(() => {
 
     // المعرض
     document.getElementById("galleryGrid").innerHTML = d.gallery.map((g, i) => `
-      <figure${i === 0 ? ' class="gallery-main"' : ""}><img src="${esc(g.src)}" alt="${esc(g.caption)}" loading="lazy"><figcaption>${esc(g.caption)}</figcaption></figure>`).join("");
+      <figure${i === 0 ? ' class="gallery-main"' : ""}><img src="${esc(hkImg(g.src))}" alt="${esc(g.caption)}" loading="lazy"><figcaption>${esc(g.caption)}</figcaption></figure>`).join("");
     document.getElementById("coverStrip").innerHTML = d.stories.map((s, i) => `
-      <a href="story.html?id=${s.id}"><img src="${esc(s.cover)}" alt="غلاف ${esc(s.title)}" loading="lazy"></a>`).join("");
+      <a href="story.html?id=${s.id}"><img src="${esc(hkImg(s.cover))}" alt="غلاف ${esc(s.title)}" loading="lazy"></a>`).join("");
 
     // مجموعات الصور الميدانية (التنفيذ + الحفل الختامي)
     renderGalleryGroups(d);
@@ -275,7 +275,7 @@ ${(() => {
       const story = d.stories.find(s => s.id === a.storyId);
       return `
       <article class="activity-card">
-        ${a.images && a.images[0] ? `<div class="activity-card-media"><img src="${esc(a.images[0])}" alt="صورة توثيق: ${esc(a.title)}" loading="lazy"></div>` : ""}
+        ${a.images && a.images[0] ? `<div class="activity-card-media"><img src="${esc(hkImg(a.images[0]))}" alt="صورة توثيق: ${esc(a.title)}" loading="lazy"></div>` : ""}
         <div class="activity-card-body">
           ${story ? `<span class="activity-story-tag">${esc(story.title)}</span>` : ""}
           <h3>${esc(a.title)}</h3>
@@ -318,7 +318,7 @@ ${(() => {
         ${realItems.map(m => `
           <article class="elder-card${m.placeholder ? " is-placeholder" : ""}">
             <div class="elder-portrait">
-              ${m.portrait ? `<img src="${esc(m.portrait)}" alt="صورة ${esc(m.name)}" loading="lazy" style="object-position:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%;transform:scale(${(m.portraitFocus && m.portraitFocus.z) || 1});transform-origin:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%">`
+              ${m.portrait ? `<img src="${esc(hkImg(m.portrait))}" alt="صورة ${esc(m.name)}" loading="lazy" style="object-position:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%;transform:scale(${(m.portraitFocus && m.portraitFocus.z) || 1});transform-origin:${(m.portraitFocus && m.portraitFocus.x != null ? m.portraitFocus.x : 50)}% ${(m.portraitFocus && m.portraitFocus.y != null ? m.portraitFocus.y : 22)}%">`
                 : `<div class="ph-frame" aria-label="مكان صورة المتحدث"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 19.5c1.6-3.6 4.3-5.4 7.5-5.4s5.9 1.8 7.5 5.4"/></svg><span>الصورة قادمة</span></div>`}
             </div>
             <div class="elder-body">
@@ -344,7 +344,7 @@ ${(() => {
           ${g.note ? `<p>${esc(g.note)}</p>` : ""}
         </div>
         <div class="ggroup-grid">
-          ${(g.images || []).map(im => `<figure><img src="${esc(im.src || im)}" alt="${esc(im.caption || g.title)}" loading="lazy" data-zoom>${im.caption ? `<figcaption>${esc(im.caption)}</figcaption>` : ""}</figure>`).join("")}
+          ${(g.images || []).map(im => `<figure><img src="${esc(hkImg(im.src || im))}" alt="${esc(im.caption || g.title)}" loading="lazy" data-zoom>${im.caption ? `<figcaption>${esc(im.caption)}</figcaption>` : ""}</figure>`).join("")}
         </div>
       </div>`).join("");
     // لايت بوكس لصور المجموعات
@@ -397,7 +397,7 @@ ${(() => {
             <h3>${esc(title)}</h3>
             ${p.date ? `<div class="press-meta"><span>📅 ${esc(p.date)}</span></div>` : ""}
             ${text ? `<p>${esc(text)}</p>` : ""}
-            ${p.photos && p.photos.length ? `<div class="press-photo-strip">${p.photos.map((ph, i) => `<img src="${esc(ph)}" alt="صورة من التغطية ${i + 1}" loading="lazy" data-zoom>`).join("")}</div>` : ""}
+            ${p.photos && p.photos.length ? `<div class="press-photo-strip">${p.photos.map((ph, i) => `<img src="${esc(hkImg(ph))}" alt="صورة من التغطية ${i + 1}" loading="lazy" data-zoom>`).join("")}</div>` : ""}
             ${p.url ? `<div class="press-actions"><a class="press-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">قراءة الخبر الأصلي ↗</a></div>` : ""}
           </div>
         </article>`;
@@ -478,7 +478,7 @@ ${(() => {
       return `
       <article class="team-card${m.placeholder ? " is-placeholder" : ""}" ${m.placeholder ? "" : 'role="button" tabindex="0"'} data-i="${i}" aria-label="${m.placeholder ? "مكان محجوز لعضو فريق" : "عرض معلومات التواصل: " + esc(m.name)}">
         <div class="team-photo">
-          ${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy" style="object-position:${(m.photoFocus && m.photoFocus.x != null ? m.photoFocus.x : 50)}% ${(m.photoFocus && m.photoFocus.y != null ? m.photoFocus.y : 22)}%;transform:scale(${(m.photoFocus && m.photoFocus.z) || 1});transform-origin:${(m.photoFocus && m.photoFocus.x != null ? m.photoFocus.x : 50)}% ${(m.photoFocus && m.photoFocus.y != null ? m.photoFocus.y : 22)}%">`
+          ${m.photo ? `<img src="${esc(hkImg(m.photo))}" alt="${esc(m.name)}" loading="lazy" style="object-position:${(m.photoFocus && m.photoFocus.x != null ? m.photoFocus.x : 50)}% ${(m.photoFocus && m.photoFocus.y != null ? m.photoFocus.y : 22)}%;transform:scale(${(m.photoFocus && m.photoFocus.z) || 1});transform-origin:${(m.photoFocus && m.photoFocus.x != null ? m.photoFocus.x : 50)}% ${(m.photoFocus && m.photoFocus.y != null ? m.photoFocus.y : 22)}%">`
             : `<div class="ph-frame"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 19.5c1.6-3.6 4.3-5.4 7.5-5.4s5.9 1.8 7.5 5.4"/></svg><span>الصورة لاحقًا</span></div>`}
         </div>
         <h3>${esc(m.name)}</h3>
@@ -566,7 +566,7 @@ ${(() => {
           <h1>${esc(s.title)}</h1>
           <p class="lede">${esc(s.desc)}</p>
         </div>
-        <div class="story-hero-img"><img src="${esc(s.cover)}" alt="غلاف ${esc(s.title)}"></div>
+        <div class="story-hero-img"><img src="${esc(hkImg(s.cover))}" alt="غلاف ${esc(s.title)}"></div>
         <div class="story-audio-box">
           <label>اسمع الحكاية بصوت الراوي</label>
           <audio controls preload="none" src="${esc(s.audio)}" aria-label="صوت ${esc(s.title)}"></audio>
@@ -574,7 +574,7 @@ ${(() => {
         <div class="story-text">${paras}</div>
         ${related.length ? `<div class="section" style="padding:26px 0 0"><h2 style="color:var(--green);font-size:22px">الحكاية على أرض الواقع</h2><div class="activities-grid" style="margin-top:14px">${related.map(a => `
           <article class="activity-card">
-            ${a.images && a.images[0] ? `<div class="activity-card-media"><img src="${esc(a.images[0])}" alt="${esc(a.title)}" loading="lazy"></div>` : ""}
+            ${a.images && a.images[0] ? `<div class="activity-card-media"><img src="${esc(hkImg(a.images[0]))}" alt="${esc(a.title)}" loading="lazy"></div>` : ""}
             <div class="activity-card-body"><h3>${esc(a.title)}</h3><p>${esc(a.desc)}</p></div>
           </article>`).join("")}</div></div>` : ""}
         <button type="button" class="share-btn share-btn-lg" data-share-id="${s.id}" data-share-title="${esc(s.title)}">مشاركة الحكاية ↗</button>
