@@ -33,7 +33,7 @@
     ".hk-msg{animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
     "@keyframes hkMsgIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}",
     ".hk-actions{animation:hkMsgIn .3s .05s cubic-bezier(.2,.8,.2,1) both}",
-    ".hk-typing{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:8px 13px;min-height:42px;background:linear-gradient(180deg,#fff,#fdfbf7);border:1px solid #e5ded2;border-radius:14px;border-start-start-radius:4px;box-shadow:0 2px 8px rgba(14,133,121,.07);animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
+    ".hk-typing{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;min-height:42px;background:linear-gradient(180deg,#fff,#fdfbf7);border-radius:999px;box-shadow:0 4px 14px rgba(14,133,121,.10);animation:hkMsgIn .28s cubic-bezier(.2,.8,.2,1) both}",
     ".hk-typing-av{position:relative;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#12a390,#0e8579);color:#fff;display:grid;place-items:center;font-size:.8rem;flex:none}",
     ".hk-typing-av::after{content:\"\";position:absolute;inset:-3px;border-radius:50%;border:2px solid #0e8579;opacity:0;animation:hkAvPulse 1.8s infinite ease-out}",
     "@keyframes hkAvPulse{0%{transform:scale(.85);opacity:.55}100%{transform:scale(1.35);opacity:0}}",
