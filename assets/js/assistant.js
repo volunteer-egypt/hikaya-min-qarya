@@ -60,7 +60,11 @@
   var sendBtn = form.querySelector("button");
   var greeted = false;
 
+  var hkHist = [];
   function add(cls, text, actions) {
+    if (cls === "me") hkHist.push({ role: "user", text: String(text || "") });
+    else if (cls === "bot") hkHist.push({ role: "model", text: String(text || "") });
+    if (hkHist.length > 12) hkHist = hkHist.slice(-12);
     var d = document.createElement("div");
     d.className = "hk-msg " + cls;
     var t = document.createElement("span");
@@ -144,7 +148,8 @@
     var qn = norm(q);
     if (!qn) return null;
 
-    // ١) تواصل مع شخص من الفريق أو شريك/مؤسسة
+    // ١) تواصل مع شخص من الفريق أو شريك/مؤسسة — فقط عند طلب التواصل صراحة
+    var contactIntent = /اكلم|تواصل|اتصل|اوصل|رقم|تليفون|موبايل|واتس|فيس|ايميل|بريد|عنوان/.test(qn);
     var people = [];
     (d.team || []).forEach(function (t) {
       if (t.placeholder || !t.name) return;
@@ -158,7 +163,7 @@
       people.push({ name: nm, role: p.badge || "شريك في المبادرة", phone: "", facebook: p.facebook, postUrl: postUrl, partner: true });
     });
     var found = null;
-    for (var i = 0; i < people.length; i++) {
+    if (contactIntent) for (var i = 0; i < people.length; i++) {
       if (nameHits(qn, people[i].name) >= 2) { found = people[i]; break; }
     }
     if (found) {
@@ -176,7 +181,7 @@
       return { text: intro + " وسيلة التواصل معاه مش متاحة على الموقع حاليًا.", actions: [] };
     }
     // نية تواصل من غير اسم مطابق: ردّ صريح «مش متاح» من غير أي اختراع
-    if (/اكلم|تواصل|اتصل|اوصل|رقم|تليفون|موبايل|واتس|فيس|تواصلي/.test(qn)) {
+    if (contactIntent) {
       return { text: "وسيلة التواصل دي مش متاحة على الموقع حاليًا.", actions: [] };
     }
 
@@ -234,7 +239,7 @@
     busy.textContent = "بيفكر…";
     body.appendChild(busy);
     body.scrollTop = body.scrollHeight;
-    fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "assistant", q: q }) })
+    fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "assistant", q: q, history: hkHist.slice(0, -1).slice(-8) }) })
       .then(function (r) { return r.json(); })
       .then(function (r) {
         busy.remove(); busy = null; sendBtn.disabled = false;
