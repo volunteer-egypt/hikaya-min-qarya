@@ -398,7 +398,9 @@ ${(() => {
     const list = (d.partners || []).filter(p => partnerFlags(p).page);
     grid.innerHTML = list.map((p, i) => `
       <div class="partner-card" role="button" tabindex="0" data-i="${i}" aria-label="عرض شعار ومعلومات ${esc(p.name)}">
-        <div class="partner-logo-frame"><img src="${esc(p.logo)}" alt="شعار ${esc(p.name)}" loading="lazy"></div>
+        <div class="partner-logo-frame">${p.logo
+          ? `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name)}" loading="lazy">`
+          : `<div class="partner-logo-ph"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg><span>الشعار لاحقًا</span></div>`}</div>
         <strong>${esc(p.name)}</strong>
         <span class="partner-cta">اضغط لعرض الشعار والصفحة</span>
       </div>`).join("");
@@ -407,12 +409,13 @@ ${(() => {
     const open = i => {
       const p = list[i];
       if (!p) return;
-      document.getElementById("partnerModalImg").src = p.logo;
-      document.getElementById("partnerModalImg").alt = "شعار " + p.name;
-      document.getElementById("partnerModalName").textContent = p.name;
+      const mimg = document.getElementById("partnerModalImg");
+      if (p.logo) { mimg.src = p.logo; mimg.alt = "شعار " + p.name; mimg.style.display = ""; }
+      else mimg.style.display = "none";
+      document.getElementById("partnerModalName").textContent = p.name || "";
       const link = document.getElementById("partnerModalLink");
-      link.href = p.facebook;
-      link.style.display = p.facebook ? "" : "none";
+      if (p.facebook) { link.href = p.facebook; link.style.display = ""; }
+      else link.style.display = "none";
       const post = document.getElementById("partnerModalPost");
       if (p.postUrl) { post.href = p.postUrl; post.style.display = ""; }
       else post.style.display = "none";

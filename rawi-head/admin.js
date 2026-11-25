@@ -41,6 +41,23 @@
   function acttCredit() {
     return '<div class="actt-credit"><img src="../assets/img/actt-logo.webp" alt="شعار ACTT" loading="lazy"><span>تطوير بواسطة ACTT</span></div><div class="actt-secure">الاتصال مشفّر</div>';
   }
+  var toastTimer = null;
+  function showToast(ok, text) {
+    var t = document.getElementById("hk-toast");
+    if (!t) { t = document.createElement("div"); t.id = "hk-toast"; t.className = "toast"; document.body.appendChild(t); }
+    t.className = "toast" + (ok ? "" : " err");
+    t.textContent = text;
+    void t.offsetWidth;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 3200);
+  }
+  // مسار عرض ملفات الموقع النسبية من داخل /rawi-head/
+  function mediaUrl(u) {
+    u = String(u || "");
+    if (!u || /^(https?:|data:|blob:)/i.test(u)) return u;
+    return SITE + u.replace(/^\.\//, "");
+  }
   function load() {
     try { session = JSON.parse(sessionStorage.getItem("hk_admin") || "null"); } catch (e) { session = null; }
   }
@@ -211,8 +228,8 @@
     }
     function persist(note) {
       saveSection(sec, spec.saveKeys || [spec.key], function (res) {
-        if (res.ok) { msg(true, "تم الحفظ ✓"); if (afterSave) afterSave(); }
-        else msg(false, res.error || "فشل الحفظ");
+        if (res.ok) { showToast(true, "تم الحفظ ✓"); if (afterSave) afterSave(); }
+        else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
       });
     }
     function draw() {
@@ -244,28 +261,36 @@
           it.appendChild(inp);
           if (f.type === "media-img" || f.type === "media-audio") {
             var row = el("div", "file-row");
-            var file = el("input"); file.type = "file";
+            var file = el("input"); file.type = "file"; file.style.display = "none";
             file.accept = f.type === "media-img" ? "image/*" : "audio/*";
-            var up = el("button", "small ghost", "رفع ملف");
-            up.onclick = function () {
+            var pick = el("button", "small ghost pick-file", f.type === "media-img" ? "اختيار صورة من الجهاز" : "اختيار ملف صوتي");
+            pick.type = "button";
+            pick.onclick = function () { file.click(); };
+            var fname = el("span", "hint fname", "");
+            file.onchange = function () {
               if (!file.files[0]) return;
-              up.disabled = true; up.textContent = "جارٍ الرفع…";
+              fname.textContent = file.files[0].name;
+              pick.disabled = true; pick.textContent = "جارٍ الرفع…";
               var rd = new FileReader();
               rd.onload = function () {
                 var b64 = rd.result.split(",")[1];
                 api({ action: "uploadMedia", token: session.token, section: sec, filename: file.files[0].name, mimeType: file.files[0].type, base64: b64 })
                   .then(function (res) {
-                    up.disabled = false; up.textContent = "رفع ملف";
-                    if (res.ok) { inp.value = res.url; item[f.k] = res.url; msg(true, "تم رفع الملف ✓"); }
-                    else msg(false, res.error || "فشل الرفع");
+                    pick.disabled = false; pick.textContent = f.type === "media-img" ? "اختيار صورة من الجهاز" : "اختيار ملف صوتي";
+                    if (res.ok) {
+                      inp.value = res.url; item[f.k] = res.url;
+                      showToast(true, "تم رفع الملف ✓ اضغط «حفظ القسم» لاعتماده");
+                      draw();
+                    }
+                    else showToast(false, res.error || "فشل الرفع");
                   });
               };
               rd.readAsDataURL(file.files[0]);
             };
-            row.appendChild(file); row.appendChild(up);
+            row.appendChild(file); row.appendChild(pick); row.appendChild(fname);
             it.appendChild(row);
             if (f.type === "media-img" && item[f.k] && !f.focus) {
-              var im = el("img", "media-preview"); im.src = item[f.k]; it.appendChild(im);
+              var im = el("img", "media-preview"); im.src = mediaUrl(item[f.k]); it.appendChild(im);
             }
             if (f.type === "media-img" && f.focus && item[f.k]) {
               var foc = item[f.k + "Focus"] || { x: 50, y: 22, z: 1 };
@@ -275,7 +300,7 @@
                 '<label class="focus-zoom">تكبير <input type="range" min="1" max="3" step="0.05"></label>' +
                 '<p class="hint">اسحب الصورة لضبط موضعها داخل الإطار الدائري كما ستظهر في الموقع، ثم احفظ القسم. ملف الصورة الأصلي لا يتغير.</p>';
               var fimg = wrap.querySelector("img");
-              fimg.src = item[f.k]; fimg.draggable = false;
+              fimg.src = mediaUrl(item[f.k]); fimg.draggable = false;
               var slider = wrap.querySelector("input");
               var frame = wrap.querySelector(".focus-frame");
               function applyF() {
@@ -318,8 +343,7 @@
         it.appendChild(act);
         itemsBox.appendChild(it);
       });
-      var add = el("button", null, "+ إضافة عنصر");
-      add.style.marginTop = "6px";
+      var add = el("button", "btn-add", "+ إضافة عنصر جديد");
       add.onclick = function () {
         var n = {};
         spec.fields.forEach(function (f) { n[f.k] = f.type === "number" ? (list.length + 1) : ""; });
@@ -329,8 +353,7 @@
         draw();
       };
       itemsBox.appendChild(add);
-      var saveB = el("button", null, "حفظ القسم");
-      saveB.style.marginTop = "14px";
+      var saveB = el("button", "save-bar", "حفظ القسم");
       saveB.onclick = function () { persist(); };
       box.appendChild(saveB);
     }
@@ -402,8 +425,8 @@
         { k: "id", label: "المعرف" },
         { k: "name", label: "الاسم" },
         { k: "logo", label: "الشعار", type: "media-img" },
-        { k: "facebook", label: "فيسبوك", type: "url" },
-        { k: "postUrl", label: "رابط منشور", type: "url" },
+        { k: "postUrl", label: "الموقع الرسمي (إن وُجد)", type: "url" },
+        { k: "facebook", label: "صفحة فيسبوك (اختياري)", type: "url" },
         { k: "note", label: "ملاحظة" },
         { k: "showHeader", label: " يظهر في الترويسة العلوية ", type: "checkbox" },
         { k: "showFooter", label: " يظهر في التذييل ", type: "checkbox" },
@@ -463,9 +486,8 @@
       var l2 = el("label", null, "النص التمهيدي");
       var ta = el("textarea"); ta.value = em.intro || "";
       ta.oninput = function () { em.intro = ta.value; };
-      var sv = el("button", null, "حفظ الإعدادات"); sv.style.marginTop = "10px";
-      sv.onclick = function () { saveSection("elders", ["eldersMessages"], function (r) { alert(r.ok ? "تم الحفظ ✓" : (r.error || "فشل")); }); };
-      head.appendChild(t); head.appendChild(l2); head.appendChild(ta); head.appendChild(sv);
+      head.appendChild(t); head.appendChild(l2); head.appendChild(ta);
+      head.appendChild(el("p", "hint", "تُحفظ هذه الإعدادات مع زر «حفظ القسم» أسفل الصفحة."));
       root.innerHTML = ""; root.appendChild(head); root.appendChild(proxyRoot);
       // edit items via a temporary holder
       var holder = { items: em.items };
@@ -506,11 +528,11 @@
       grid.appendChild(lab);
     });
     box.appendChild(grid);
-    var b = el("button", null, "حفظ");
+    var b = el("button", "save-bar", "حفظ");
     b.onclick = function () {
       saveSection("meta", ["meta", "sectionVisibility", "logos", "heroImage"], function (res) {
-        var mm = $("#sm", box); mm.style.display = "block"; mm.className = "msg " + (res.ok ? "ok" : "err");
-        mm.textContent = res.ok ? "تم الحفظ ✓" : (res.error || "فشل الحفظ");
+        if (res.ok) showToast(true, "تم الحفظ ✓");
+        else showToast(false, res.error || "فشل الحفظ — لم تُحفظ التعديلات");
       });
     };
     box.appendChild(b);
@@ -624,7 +646,9 @@
           t.appendChild(tr);
         });
         listBox.innerHTML = "";
-        listBox.appendChild(t);
+        var tw = el("div", "table-wrap");
+        tw.appendChild(t);
+        listBox.appendChild(tw);
       });
     }
     drawList();
