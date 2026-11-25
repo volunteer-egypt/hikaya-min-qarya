@@ -44,10 +44,32 @@
   // الشريك التقني: استكمال عرض بطاقة المركز التي أنشأها المالك من اللوحة (بتوجيهه 08:29/08:48) —
 // تملأ الحقول الفارغة فقط، وأي قيمة يدخلها بنفسه لاحقًا تَسبق هذه الافتراضات فلا ازدواج.
   var TECH_PARTNER_URL = "actt-official.pages.dev";
+  // روابط Drive المرفوعة من اللوحة تُقدَّم عبر CDN مباشر (أثبت على الجوال من uc?export=view)
+  function hkImg(u) {
+    u = String(u || "");
+    var m = u.match(/drive\.google\.com\/(?:uc\?[^"']*?\bid=|file\/d\/)([\w-]{10,})/);
+    if (m) return "https://lh3.googleusercontent.com/d/" + m[1] + "=w1200";
+    return u;
+  }
+  // لا صورة مكسورة أبدًا في بطاقات/شعارات الشركاء: شعار بديل للشريك التقني، وإطار «الشعار لاحقًا» لغيره
+  if (!window.__hkImgGuard) {
+    window.__hkImgGuard = true;
+    document.addEventListener("error", function (e) {
+      var t = e.target;
+      if (!t || t.tagName !== "IMG" || !t.classList.contains("p-logo")) return;
+      var fb = t.getAttribute("data-fallback");
+      if (fb && String(t.getAttribute("src") || "").indexOf(fb) === -1) { t.src = fb; return; }
+      var ph = document.createElement("div");
+      ph.className = "partner-logo-ph";
+      ph.innerHTML = '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg><span>الشعار لاحقًا</span>';
+      t.replaceWith(ph);
+    }, true);
+  }
   function normalizePartners(d) {
     if (!d || !d.partners) return d;
     d.partners.forEach(function (p) {
       if (!p || String(p.postUrl || "").indexOf(TECH_PARTNER_URL) === -1) return;
+      p.isTechPartner = true;
       if (!p.name) p.name = "الشريك التقني";
       if (!p.logo) p.logo = "assets/img/actt-logo.webp";
       if (!p.note) p.note = "شريك تقني تطوّع بخبرته لتحفظ حكايات أهلنا وتوصل أصواتهم.";
@@ -151,7 +173,7 @@
         <div class="logos-row">
 ${(() => {
             const hp = (d.partners || []).filter(p => partnerFlags(p).header && p.logo);
-            const im = p => `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name || "شريك")}">`;
+            const im = p => `<img class="p-logo" src="${esc(hkImg(p.logo))}" alt="شعار ${esc(p.name || "شريك")}"${p.isTechPartner ? ' data-fallback="assets/img/actt-logo.webp"' : ""}>`;
             return `<div class="logo-box logo-ministry">${hp[0] ? im(hp[0]) : ""}</div>
           <div class="logo-box logo-youth">${hp.slice(1).map(im).join("")}</div>`;
           })()}
@@ -178,7 +200,7 @@ ${(() => {
         const fp = (d.partners || []).filter(p => partnerFlags(p).footer && p.logo);
         if (!fp.length) return "";
         return `<div class="footer-partners">` + fp.map(p => {
-          const img = `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name || "شريك")}">`;
+          const img = `<img class="p-logo" src="${esc(hkImg(p.logo))}" alt="شعار ${esc(p.name || "شريك")}"${p.isTechPartner ? ' data-fallback="assets/img/actt-logo.webp"' : ""}>`;
           return p.facebook ? `<a href="${esc(p.facebook)}" target="_blank" rel="noopener" title="${esc(p.name || "")}">${img}</a>` : img;
         }).join("") + `</div>`;
       })()}`;
@@ -412,7 +434,7 @@ ${(() => {
     grid.innerHTML = list.map((p, i) => `
       <div class="partner-card" role="button" tabindex="0" data-i="${i}" aria-label="عرض شعار ومعلومات ${esc(p.name)}">
         <div class="partner-logo-frame">${p.logo
-          ? `<img src="${esc(p.logo)}" alt="شعار ${esc(p.name)}" loading="lazy">`
+          ? `<img class="p-logo" src="${esc(hkImg(p.logo))}" alt="شعار ${esc(p.name)}" loading="lazy"${p.isTechPartner ? ' data-fallback="assets/img/actt-logo.webp"' : ""}>`
           : `<div class="partner-logo-ph"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg><span>الشعار لاحقًا</span></div>`}</div>
         <strong>${esc(p.name)}</strong>
         <span class="partner-cta">اضغط لعرض الشعار والصفحة</span>
@@ -423,7 +445,9 @@ ${(() => {
       const p = list[i];
       if (!p) return;
       const mimg = document.getElementById("partnerModalImg");
-      if (p.logo) { mimg.src = p.logo; mimg.alt = "شعار " + p.name; mimg.style.display = ""; }
+      mimg.classList.add("p-logo");
+      if (p.isTechPartner) mimg.setAttribute("data-fallback", "assets/img/actt-logo.webp"); else mimg.removeAttribute("data-fallback");
+      if (p.logo) { mimg.src = hkImg(p.logo); mimg.alt = "شعار " + p.name; mimg.style.display = ""; }
       else mimg.style.display = "none";
       document.getElementById("partnerModalName").textContent = p.name || "";
       const mnote = document.getElementById("partnerModalNote");

@@ -55,7 +55,10 @@
   // مسار عرض ملفات الموقع النسبية من داخل /rawi-head/
   function mediaUrl(u) {
     u = String(u || "");
-    if (!u || /^(https?:|data:|blob:)/i.test(u)) return u;
+    if (!u) return u;
+    var m = u.match(/drive\.google\.com\/(?:uc\?[^"']*?\bid=|file\/d\/)([\w-]{10,})/);
+    if (m) return "https://lh3.googleusercontent.com/d/" + m[1] + "=w1200";
+    if (/^(https?:|data:|blob:)/i.test(u)) return u;
     return SITE + u.replace(/^\.\//, "");
   }
   function load() {
