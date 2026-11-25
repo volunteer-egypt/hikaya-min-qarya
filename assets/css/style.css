@@ -488,3 +488,6 @@ body{padding-bottom:0}
 .social-ic.site{background:#5b4636}
 .modal-socials{margin-top:10px}
 .modal-socials-label{display:block;font-size:12px;color:#8a7f6d;margin:10px 0 6px}
+
+/* لا يغطي زر المساعد العائم محتوى التذييل في صفحة الحكاية (لا شريط توقيع فيها) */
+body[data-page="story"] footer{padding-bottom:108px}
