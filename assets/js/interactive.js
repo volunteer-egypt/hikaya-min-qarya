@@ -388,6 +388,7 @@
     sec.id = "elders";
     sec.className = "section wrap";
     const stories = document.getElementById("stories");
+    if (!stories || !stories.parentNode) return;
     stories.parentNode.insertBefore(sec, stories.nextSibling);
     sec.appendChild(eb);
   }
@@ -395,6 +396,7 @@
   function buildBackBar() {
     if (document.getElementById("hkBackBar")) return;
     const hero = document.getElementById("hero");
+    if (!hero || !hero.parentNode) return;
     const bar = document.createElement("div");
     bar.className = "wrap";
     bar.id = "hkBackBar";
@@ -405,6 +407,7 @@
   function buildLanding() {
     if (document.getElementById("landingMenu")) return;
     const hero = document.getElementById("hero");
+    if (!hero || !hero.parentNode) return;
     const sec = document.createElement("section");
     sec.id = "landingMenu";
     sec.className = "section wrap";
