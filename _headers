@@ -4,3 +4,9 @@
   Cache-Control: no-cache
 /rawi-head/admin.css
   Cache-Control: no-cache
+/assets/img/*
+  Cache-Control: public, max-age=86400
+/assets/css/*
+  Cache-Control: public, max-age=3600
+/assets/js/*
+  Cache-Control: public, max-age=3600
